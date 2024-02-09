@@ -20,6 +20,7 @@ def hello(word):
     print("Hello" + word)
 
 
+from odrivedatabase import OdriveDatabase
 
 import board 
 import can
@@ -153,143 +154,104 @@ class ODriveCAN:
         
 
 
+#-------------------------------------- Motor Feedback ----------------------------------------------------
+# In order for these functions to work you need to have the O-Drive set with the Cyclic messages 
+# The cyclic messgaes for CAN will make the O-Drive automatically send the data you want to collect at the set rate.
 
-#-------------------------------------- Motor Feedback with CAN RTR ----------------------------------------------------
+    def get_one_encoder_estimate(self, timeout=1.0):
+        start_time = time.time()
+        while (time.time() - start_time) < timeout:
+            msg = self.canBus.recv(timeout=timeout - (time.time() - start_time))
+            if msg is None:
+                print("Timeout occurred, no message received.")
+                break
 
-    def send_rtr_message(self, request_id):
-        try:
-            # Create an RTR frame
-            rtr_frame = can.Message(
-                arbitration_id=(self.nodeID << 5 | request_id),
-                is_remote_frame=True,
-                is_extended_id=False
-            )
-
-            # Send the RTR frame
-            self.canBus.send(rtr_frame)
-
-        except Exception as e:
-            print(f"Error sending RTR message to ODrive {self.nodeID}, request_id {request_id}: {str(e)}")
-
-
-
-    def get_encoder_estimate_rtr(self):
-        """
-        Get Encoder Estimates for specific O-Drive Controller Axis through CAN BUS
-
-        CAN Get_Encoder_Estimates: 0x09
-                    - Pos_Estimate 
-                    - Vel_Estimate
-
-        Returns:
-            Pos_Estimate
-            Vel_Estimate 
-        """
-        request_id = 0x09
-        self.send_rtr_message(request_id)
-
-        # Wait for a response
-        response = self.canBus.recv(timeout=1.0)
-
-        if response:
-            pos, vel = struct.unpack('<ff', bytes(response.data))
-            #print(f"O-Drive {self.nodeID} - pos: {pos:.3f} [turns], vel: {vel:.3f} [turns/s]")
-            return pos, vel
+            if msg.arbitration_id == (self.nodeID << 5 | 0x09):  # Encoder estimate
+                pos, vel = struct.unpack('<ff', bytes(msg.data))
+                print(f"O-Drive {self.nodeID} - pos: {pos:.3f} [turns], vel: {vel:.3f} [turns/s]")
+                break
         else:
-            print(f"No response received for ODrive {self.nodeID}, request_id {request_id}")
+            print(f"No encoder estimate message received for O-Drive {self.nodeID} within the timeout period.")
 
 
 
-    def get_torque_rtr(self):
-        """
-        Get Torque Target & Estimate for specific O-Drive Controller Axis through CAN BUS with RTR bit.
-        This doesn't require the cyclic message to be set up on the O-Drive Firmware.
+    # Function to print torque feedback for a specific O-Drive one time
+    def get_one_torque(self, timeout=1.0):
+        start_time = time.time()
+        while (time.time() - start_time) < timeout:
+            msg = self.canBus.recv(timeout=timeout - (time.time() - start_time))  # Adjust timeout for recv
+            if msg is None:
+                print("Timeout occurred, no message received.")
+                break
 
-        CAN Get_Encoder_Estimates: 0x1C
-                    - Torque_Target    (Nm)
-                    - Torque_Estimate  (Nm)
-
-        Returns:
-            Torque_Target
-            Torque_Estimate 
-        """
-        request_id = 0x1C
-        self.send_rtr_message(request_id)
-
-        # Wait for a response
-        response = self.canBus.recv(timeout=1.0)
-
-        if response:
-            torque_target, torque_estimate = struct.unpack('<ff', bytes(response.data))
-            #print(f"O-Drive {self.nodeID} - Torque Target: {torque_target:.3f} [Nm], Torque Estimate: {torque_estimate:.3f} [Nm]")
-            return torque_target, torque_estimate
+            if msg.arbitration_id == (self.nodeID << 5 | 0x1C):  # 0x1C: Get_Torques
+                torque_target, torque_estimate = struct.unpack('<ff', bytes(msg.data))
+                print(f"O-Drive {self.nodeID} - Torque Target: {torque_target:.3f} [Nm], Torque Estimate: {torque_estimate:.3f} [Nm]")
+                break
         else:
-            print(f"No response received for ODrive {self.nodeID}, request_id {request_id}")
+            print(f"No torque message received for O-Drive {self.nodeID} within the timeout period.")
 
 
 
-    def get_bus_voltage_current_rtr(self):
-        """
-        Get Bus Voltage & Current for specific O-Drive Controller Axis through CAN BUS with RTR bit.
-        This doesn't require the cyclic message to be set up on the O-Drive Firmware.
+    def get_one_bus_voltage_current(self, timeout=1.0):
+        start_time = time.time()
+        while (time.time() - start_time) < timeout:
+            msg = self.canBus.recv(timeout=timeout - (time.time() - start_time))
+            if msg is None:
+                print("Timeout occurred, no message received.")
+                break
 
-        CAN Get_Encoder_Estimates: 0x17
-                    - Bus_Voltage    (V)
-                    - Bus_Current    (Amps)
-
-        Returns:
-            Torque_Target 
-            Torque_Estimate 
-        """
-        request_id = 0x17
-        self.send_rtr_message(request_id)
-
-        # Wait for a response
-        response = self.canBus.recv(timeout=1.0)
-
-        if response:
-            bus_voltage, bus_current = struct.unpack('<ff', bytes(response.data))
-            #print(f"O-Drive {self.nodeID} - Bus Voltage: {bus_voltage:.3f} [V], Bus Current: {bus_current:.3f} [A]")
-            return bus_voltage, bus_current
+            if msg.arbitration_id == (self.nodeID << 5 | 0x17):  # Bus voltage and current
+                bus_voltage, bus_current = struct.unpack('<ff', bytes(msg.data))
+                print(f"O-Drive {self.nodeID} - Bus Voltage: {bus_voltage:.3f} [V], Bus Current: {bus_current:.3f} [A]")
+                break
         else:
-            print(f"No response received for ODrive {self.nodeID}, request_id {request_id}")
+            print(f"No bus voltage or current message received for O-Drive {self.nodeID} within the timeout period.")
 
 
 
-    def get_iq_setpoint_measured_rtr(self):
-        """
-        Get Iq Setpoint & Measured for specific O-Drive Controller Axis through CAN BUS with RTR bit.
-        This doesn't require the cyclic message to be set up on the O-Drive Firmware.
+    def get_one_iq_setpoint_measured(self, timeout=1.0):
+        start_time = time.time()
+        while (time.time() - start_time) < timeout:
+            msg = self.canBus.recv(timeout=timeout - (time.time() - start_time))
+            if msg is None:
+                print("Timeout occurred, no message received.")
+                break
 
-        CAN Get_Encoder_Estimates: 0x1C
-                    - Iq_Setpoint    (Amps)
-                    - Iq_Measured    (Amps)
-
-        Returns:
-            Torque_Target
-            Torque_Estimate 
-        """
-        request_id = 0x14
-        self.send_rtr_message(request_id)
-
-        # Wait for a response
-        response = self.canBus.recv(timeout=1.0)
-
-        if response:
-            iq_setpoint, iq_measured = struct.unpack('<ff', bytes(response.data))
-            #print(f"O-Drive {self.nodeID} - Iq Setpoint: {iq_setpoint:.3f} [A], Iq Measured: {iq_measured:.3f} [A]")
-            return iq_setpoint, iq_measured
+            if msg.arbitration_id == (self.nodeID << 5 | 0x14):  # IQ setpoint and measured
+                iq_setpoint, iq_measured = struct.unpack('<ff', bytes(msg.data))
+                print(f"O-Drive {self.nodeID} - Iq Setpoint: {iq_setpoint:.3f} [A], Iq Measured: {iq_measured:.3f} [A]")
+                break
         else:
-            print(f"No response received for ODrive {self.nodeID}, request_id {request_id}")
+            print(f"No IQ setpoint or measured message received for O-Drive {self.nodeID} within the timeout period.")
 
 
-    
-    def get_all_data_rtr(self):
+
+    #This doesn't work the default cyclic message isn't set on O-Drive GUI yet. 
+    def get_one_powers(self, timeout=1.0):
+        start_time = time.time()
+        while (time.time() - start_time) < timeout:
+            msg = self.canBus.recv(timeout=timeout - (time.time() - start_time))
+            if msg is None:
+                print("Timeout occurred, no message received.")
+                break
+
+            if msg.arbitration_id == (self.nodeID << 5 | 0x1D):  # Powers
+                electrical_power, mechanical_power = struct.unpack('<ff', bytes(msg.data))
+                print(f"O-Drive {self.nodeID} - Electrical Power: {electrical_power:.3f} [W], Mechanical Power: {mechanical_power:.3f} [W]")
+                break
+        else:
+            print(f"No power message received for O-Drive {self.nodeID} within the timeout period.")
+
+
+
+    def get_all_data(self):
         # Collect data from each function
-        encoder_data = self.get_encoder_estimate_rtr()
-        torque_data = self.get_torque_rtr()
-        voltage_current_data = self.get_bus_voltage_current_rtr()
-        iq_setpoint_measured_data = self.get_iq_setpoint_measured_rtr()
+        encoder_data = self.get_one_encoder_estimate() 
+        torque_data = self.get_one_bus_voltage_current()
+        voltage_current_data = self.get_one_bus_voltage_current()
+        iq_setpoint_measured_data = self.get_one_iq_setpoint_measured()
+        #power_data = self.get_one_powers()
 
         # Format each value to 3 decimal places if they are numeric
         def format_data(data):
@@ -301,10 +263,15 @@ class ODriveCAN:
         torque_data_formatted = format_data(torque_data)
         voltage_current_data_formatted = format_data(voltage_current_data)
         iq_setpoint_measured_data_formatted = format_data(iq_setpoint_measured_data)
+        #power_data_formatted = format_data(power_data)
 
         # Print formatted data
         print("Data: {}, {},  {}, {}"
-            .format(encoder_data_formatted, torque_data_formatted, voltage_current_data_formatted, iq_setpoint_measured_data_formatted))
+            .format(encoder_data_formatted,
+                    torque_data_formatted,
+                    voltage_current_data_formatted,
+                    iq_setpoint_measured_data_formatted
+                    ))
 
         # Compile all data into a single structure (dictionary for better readability)
         all_data = {
@@ -319,10 +286,13 @@ class ODriveCAN:
 
         return all_data
 
+
+
+
     """
     2/7/24
 
-     I want to create a method/function that will take all the data from the 'get_all_data_rtr()' and then put it into a sqlite database.
+     I want to create a method/function that will take all the data from the 'get_all_data()' and then put it into a sqlite database.
     
      How can I make it so that I can collect this data and add it to a database but it won't interfere if I also want to be sending motor
      commands at different time intervals?
