@@ -142,7 +142,7 @@ class OdriveDatabase:
 
 
 
-
+"""
 # Example usage
 database = OdriveDatabase('odrive_database.db')
 
@@ -171,3 +171,4 @@ electrical_power = 120
 mechanical_power = 110
 
 database.add_odrive_data(trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power)
+"""
