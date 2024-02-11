@@ -25,6 +25,8 @@ theme:
 
 nav:
   - Home: index.md
+  - O-Drive Setup: ODriveSetup.md
+  - Raspberry Pi CAN Hat Setup: piCANHatSetup.md
 
 markdown_extensions:
   - pymdownx.highlight:
