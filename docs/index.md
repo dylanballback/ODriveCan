@@ -21,7 +21,7 @@ if __name__ == "__main__":
     odrive.run(controller(odrive))
 ```
 
-#### RESULT
+#### Result
 A video might be good to add here.
 
 ### Two ODrive:
@@ -89,5 +89,5 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-#### RESULT
+#### Result
 A video might be good to add here.
