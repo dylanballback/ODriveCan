@@ -1,4 +1,4 @@
-from odrivedatabase import OdriveDatabase
+from .odrivedatabase import OdriveDatabase
 import asyncio
 import can
 import struct
