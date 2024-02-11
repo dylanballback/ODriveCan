@@ -1,8 +1,6 @@
 from sqlite3 import Error
 import sqlite3
 
-
-
 class OdriveDatabase:
     def __init__(self, database_path=None):
         """

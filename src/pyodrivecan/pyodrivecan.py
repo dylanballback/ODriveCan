@@ -1,32 +1,8 @@
-#This is where my package code will live. 
-
-#Dylan's Example for reference on how to setup function with docstring format.
-def hello(word):
-    """
-    Docstring Example description.
-
-    Para:
-        word - this will take in a string and prints "Hello" + string.
-        
-
-    Example:
-        >>> import odrivecan
-        >>> odrive.hello("Dylan")
-        ...
-        ... Hello Dylan
-    """
-
-    #First example print function. 
-    print("Hello" + word)
-
-
 from odrivedatabase import OdriveDatabase
 import asyncio
 import can
 import struct
 import time
-from datetime import datetime, timedelta
-
 
 
 class ODriveCAN:
@@ -42,12 +18,28 @@ class ODriveCAN:
         O-Drive Controller Specific Attributes:
         nodeID (integer): The node ID can be set by the 
     """
-    def __init__(self, nodeID, canBusID="can0", canBusType="socketcan", position=None, velocity=None, torque_target=None, torque_estimate=None, bus_voltage=None, bus_current=None, iq_setpoint=None, iq_measured=None, electrical_power=None, mechanical_power=None):
+    def __init__(
+            self,
+            nodeID,
+            canBusID="can0",
+            canBusType="socketcan",
+            position=None,
+            velocity=None,
+            torque_target=None,
+            torque_estimate=None,
+            bus_voltage=None,
+            bus_current=None,
+            iq_setpoint=None,
+            iq_measured=None,
+            electrical_power=None,
+            mechanical_power=None,
+            database='odrive_data.db'):
+    
         self.canBusID = canBusID
         self.canBusType = canBusType
         self.nodeID = nodeID
         self.canBus = can.interface.Bus(canBusID, bustype=canBusType)
-        self.database = OdriveDatabase('odrive_data.db')
+        self.database = OdriveDatabase(database)
         self.collected_data = []  # Initialize an empty list to store data
         self.start_time = time.time()  # Capture the start time when the object is initialized
         self.latest_data = {}
@@ -63,9 +55,6 @@ class ODriveCAN:
         self.iq_measured = iq_measured
         self.electrical_power = electrical_power
         self.mechanical_power = mechanical_power
-
-
-
 
     def initCanBus(self):
         """
@@ -105,7 +94,10 @@ class ODriveCAN:
 
         Example:
             >>> odrive_can.closed_loop_control()
+            ...
+            ... Successfully set control state to ODrive #NodeID.
         """
+
         self.flush_can_buffer()
         print(f"Attempting to set control state to ODrive {self.nodeID}...")
         try:
@@ -140,6 +132,7 @@ class ODriveCAN:
         ...
         ... Can bus successfully shut down.
         """
+
         self.canBus.shutdown
 
         print("Can bus successfully shut down.")
@@ -160,6 +153,7 @@ class ODriveCAN:
         Example:
             >>> odrive_can.set_position(1000.0)
         """
+
         self.canBus.send(can.Message(
             arbitration_id=(self.nodeID << 5 | 0x0C),
             data=struct.pack('<fhh', float(position), velocity_feedforward, torque_feedforward),
@@ -180,6 +174,7 @@ class ODriveCAN:
         Example:
             >>> odrive_can.set_velocity(500.0)
         """
+
         self.canBus.send(can.Message(
             arbitration_id=(self.nodeID << 5 | 0x0d),  # 0x0d: Set_Input_Vel
             data=struct.pack('<ff', velocity, torque_feedforward),
@@ -198,6 +193,7 @@ class ODriveCAN:
         Example:
             >>> odrive_can.set_torque(10.0)
         """
+        
         self.canBus.send(can.Message(
             arbitration_id=(self.nodeID << 5 | 0x0E),  # 0x0E: Set_Input_Torque
             data=struct.pack('<f', torque),
@@ -215,7 +211,10 @@ class ODriveCAN:
 
 
     def process_can_message(self, message):
-        """Processes received CAN messages and updates the latest data."""
+        """
+        Processes received CAN messages and updates the latest data.
+        """
+        
         arbitration_id = message.arbitration_id
         data = message.data
         if arbitration_id == (self.nodeID << 5 | 0x09):  # Encoder estimate

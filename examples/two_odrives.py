@@ -1,4 +1,4 @@
-from pyodrivecan import pyodrivecan
+import pyodrivecan
 import asyncio
 from datetime import datetime, timedelta
 

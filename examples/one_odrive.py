@@ -1,4 +1,4 @@
-from pyodrivecan import pyodrivecan
+import pyodrivecan
 import asyncio
 
 async def controller(odrive):

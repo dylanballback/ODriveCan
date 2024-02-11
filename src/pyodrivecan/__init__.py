@@ -6,4 +6,5 @@ Examples
 """
 __version__ = "0.0.1"
 
-from .pyodrivecan import hello
+from .pyodrivecan import ODriveCAN
+from .odrivedatabase import OdriveDatabase
