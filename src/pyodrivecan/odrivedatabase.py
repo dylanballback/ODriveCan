@@ -1,6 +1,8 @@
 from sqlite3 import Error
 import sqlite3
 
+
+
 class OdriveDatabase:
     def __init__(self, database_path=None):
         """
@@ -76,7 +78,7 @@ class OdriveDatabase:
             UniqueID INTEGER PRIMARY KEY AUTOINCREMENT,
             trial_id INTEGER NOT NULL,
             node_ID TEXT,
-            time TEXT,
+            time REAL,
             position REAL,
             velocity REAL,
             torque_target REAL,
@@ -118,6 +120,26 @@ class OdriveDatabase:
         self.execute(sql)
 
 
+    def get_next_trial_id(self):
+        """
+        Fetches the next trial_id by finding the maximum trial_id in the database and adding 1.
+
+        Returns:
+            The next trial_id to be used.
+        """
+        try:
+            c = self.conn.cursor()
+            c.execute("SELECT MAX(trial_id) FROM ODriveData")
+            max_id = c.fetchone()[0]
+            if max_id is not None:
+                return max_id + 1
+            else:
+                return 1  # If table is empty, start with 1
+        except Error as e:
+            print(e)
+            return 1  # Default to 1 if there's an issue
+
+
 
     def add_odrive_data(self, trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power):
         """
@@ -137,6 +159,24 @@ class OdriveDatabase:
         sql = '''INSERT INTO ODriveData(trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power)
                  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
         return self.execute(sql, (trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power))
+
+
+    def bulk_insert_odrive_data(self, data_list):
+        """Inserts multiple data records into the database."""
+        conn = self.create_connection()  # Create a new connection
+        try:
+            c = conn.cursor()
+            for data in data_list:
+                sql = '''INSERT INTO ODriveData(trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power)
+                         VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+                params = (data['trial_id'], data['node_ID'], data['time'], data['position'], data['velocity'], data['torque_target'], data['torque_estimate'], data['bus_voltage'], data['bus_current'], data['iq_setpoint'], data['iq_measured'], data['electrical_power'], data['mechanical_power'])
+                c.execute(sql, params)
+            conn.commit()
+        except Error as e:
+            print(e)
+        finally:
+            conn.close()
+
 
 
 
