@@ -33,5 +33,5 @@ database.insert_into_user_defined_table(table_name, columns, values)
 print("Added new values into User Defined Table.")
 ```
 
-Results:
-![User Defined Table Example Results](https://github.com/dylanballback/ODriveCan/blob/main/media/databaseMedia/ODriveCAN_example_database.png)
+
+![User Defined Table Example Results](media/databaseMedia/ODriveCAN_example_database.png)

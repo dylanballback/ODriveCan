@@ -36,6 +36,8 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - tables
+  - attr_list
+  - md_in_html
 
   # Icons
   - pymdownx.emoji:
