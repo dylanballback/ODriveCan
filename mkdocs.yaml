@@ -39,10 +39,12 @@ markdown_extensions:
   - attr_list
   - md_in_html
 
+
   # Icons
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
 
   # Content Tabs
   - pymdownx.tabbed:
@@ -52,6 +54,8 @@ markdown_extensions:
 plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+
+  #Plugin to allow for zoom on images    
   - glightbox:
       touchNavigation: true
       loop: false
