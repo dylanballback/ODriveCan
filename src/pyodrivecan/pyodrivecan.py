@@ -199,7 +199,7 @@ class ODriveCAN:
             data=struct.pack('<f', torque),
             is_extended_id=False
         ))
-        print(f"Successfully set ODrive {self.nodeID} to {torque} [Nm]")
+        #print(f"Successfully set ODrive {self.nodeID} to {torque} [Nm]")
 #-------------------------------------- Motor Controls END-------------------------------------------------
 
 
