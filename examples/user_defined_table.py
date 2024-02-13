@@ -6,7 +6,7 @@ database = pyodrivecan.OdriveDatabase('odrive_database.db')
 # Define the table name
 table_name = "pid_parameters"
 
-# Define columns for the new table
+# Define columns and SQL datatypes for the new table
 columns = [
     ("kp", "REAL"),
     ("ki", "REAL"),
@@ -16,13 +16,11 @@ columns = [
 
 # Create the table
 database.create_user_defined_table(table_name, columns)
-print("Created User Defined Table.")
 
 # Define the existing columns, and values for the new record
 columns = ["trial_id", "kp", "ki", "kd", "remarks", ]
 values = [1, 0.5, 0.00, 0.01, "Initial test parameters"]  # Ensure trial_id 1 exists in ODriveData
 
 
-# Insert the data
+# Insert the data from the 'values' list above
 database.insert_into_user_defined_table(table_name, columns, values)
-print("Added new values into User Defined Table.")
