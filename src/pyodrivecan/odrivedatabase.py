@@ -99,7 +99,7 @@ class OdriveDatabase:
         """
         Creates a user-defined table with specified columns and foreign key relationship to the O-Drive Data table.
 
-        Para:
+        Params:
             table_name - Name of the table to be created.
             columns - List of tuples with the format (column_name, data_type).
 
@@ -107,8 +107,13 @@ class OdriveDatabase:
             >>> columns = [("p", "REAL"), ("i", "REAL"), ("d", "REAL"), ("trial_notes", "TEXT")]
             >>> database.create_user_defined_table("UsersControllerParameters", columns)
         """
+        # Join the column definitions into a single string
         columns_sql = ',\n'.join([f"{name} {data_type}" for name, data_type in columns])
-        fk_sql = ",\nFOREIGN KEY (trial_id) REFERENCES ODriveData(trial_id)"
+
+        # Define the foreign key SQL, ensuring no leading comma
+        fk_sql = "FOREIGN KEY (trial_id) REFERENCES ODriveData(trial_id)"
+
+        # Combine column definitions and foreign key clause, ensuring no extraneous commas
         sql = f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             UniqueID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -117,8 +122,98 @@ class OdriveDatabase:
             {fk_sql}
         );
         """
+        print(sql)
+        # Execute the SQL statement
         self.execute(sql)
 
+
+    def insert_into_user_defined_table(self, table_name, columns, values):
+        """
+        Inserts data into a user-defined table after validating data types. Ensures foreign key constraints are respected.
+
+        Params:
+            table_name - Name of the table where data will be inserted.
+            columns - List of column names where the data needs to be inserted.
+            values - List of values corresponding to the columns.
+        """
+        # Assuming validation includes foreign key existence checks or is handled externally
+        if self.validate_data_types(table_name, dict(zip(columns, values))):
+            columns_sql = ', '.join(columns)
+            placeholders = ', '.join(['?' for _ in values])
+            sql = f"INSERT INTO {table_name} ({columns_sql}) VALUES ({placeholders})"
+            self.execute(sql, values)
+        else:
+            print("Data type validation failed. No data inserted.")
+
+
+#----------- Methods to validate that data being uploaded to user defined table is correct type. -----------------
+
+    def validate_data_types(self, table_name, insert_data):
+        """
+        Validates the datatypes of the insert_data against the expected datatypes of the columns in the table.
+
+        Params:
+            table_name - Name of the table where data will be inserted.
+            insert_data - Dictionary with the format {column_name: value} for the data to be inserted.
+        """
+        expected_data_types = self.get_expected_column_types(table_name)
+        for column, value in insert_data.items():
+            expected_type = expected_data_types.get(column)
+            if not self.check_data_type(value, expected_type):
+                print(f"Value for column '{column}' does not match expected type '{expected_type}'.")
+                return False
+        return True
+
+    def fetch(self, sql, params=None):
+        """
+        Fetches data from the database using a SQL statement.
+
+        Params:
+            sql - SQL query to be executed.
+            params - Optional parameters for the SQL query.
+
+        Returns:
+            A list of rows returned by the query.
+        """
+        try:
+            c = self.conn.cursor()
+            c.execute(sql, params or ())
+            return c.fetchall()  # Fetch and return all rows
+        except Error as e:
+            print(e)
+            return []
+
+    def get_expected_column_types(self, table_name):
+        """
+        Retrieves the expected column types for a given table.
+
+        Params:
+            table_name - Name of the table.
+        """
+        sql = f"PRAGMA table_info({table_name});"
+        rows = self.fetch(sql)  # Use fetch instead of execute
+        return {row[1]: row[2] for row in rows}
+
+
+    def check_data_type(self, value, expected_type):
+        """
+        Checks if a value matches the expected SQLite data type.
+
+        Params:
+            value - The value to check.
+            expected_type - The expected SQLite data type as a string.
+        """
+        type_map = {
+            'INTEGER': int,
+            'REAL': (int, float),
+            'TEXT': str,
+            # Add more mappings as necessary
+        }
+        return isinstance(value, type_map.get(expected_type, object))
+
+    
+
+#-----------------------------------------------------------------------------------------------------------
 
     def get_next_trial_id(self):
         """
@@ -182,16 +277,32 @@ class OdriveDatabase:
 
 """
 # Example usage
+
+
 database = OdriveDatabase('odrive_database.db')
 
-# Create user-defined table
+# Define columns for the new table
 columns = [
-            ("p", "REAL"),
-            ("i", "REAL"),
-            ("d", "REAL"),
-            ("trial_notes", "TEXT")
-            ]
-database.create_user_defined_table("UsersControllerParameters", columns)
+    ("kp", "REAL"),
+    ("ki", "REAL"),
+    ("kd", "REAL"),
+    ("remarks", "TEXT"),
+    ("trial_id", "INTEGER"),  # Assuming you want to keep a foreign key relationship
+]
+
+# Create the table
+database.create_user_defined_table("TestParameters", columns)
+
+
+# Define the table name, columns, and values for the new record
+table_name = "TestParameters"
+columns = ["kp", "ki", "kd", "remarks", "trial_id"]
+values = [0.5, 0.00, 0.01, "Initial test parameters", 1]  # Ensure trial_id 1 exists in ODriveData
+
+# Insert the data
+database.insert_into_user_defined_table(table_name, columns, values)
+
+
 
 # Add O-Drive Data
 trial_id = 1
