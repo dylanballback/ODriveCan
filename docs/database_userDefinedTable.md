@@ -6,8 +6,13 @@ This is an example of how to create your own table inside the database to store 
 
 
 In this example I am creating a new table called `pid_parameters` and adding the columns `kp`, `ki`, `kd`, and `remarks`. 
+
+
 I will be using this table to keep track of my PID constants set for each trial along with any additional comments/remarks I want to add. 
+
+
 The `trial_id` will automatically be added to the table as a foreign key to link this data to its corresoponding data in the `ODriveData` table. 
+
 
 ```python 
 import pyodrivecan
