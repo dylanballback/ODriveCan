@@ -23,6 +23,7 @@ class ODriveCAN:
             nodeID,
             canBusID="can0",
             canBusType="socketcan",
+            closed_loop_control_flag = True,
             position=None,
             velocity=None,
             torque_target=None,
@@ -38,6 +39,7 @@ class ODriveCAN:
         self.canBusID = canBusID
         self.canBusType = canBusType
         self.nodeID = nodeID
+        self.closed_loop_control_flag = closed_loop_control_flag #Default to TRUE closed loop control set in init function.
         self.canBus = can.interface.Bus(canBusID, bustype=canBusType)
         self.database = OdriveDatabase(database)
         self.collected_data = []  # Initialize an empty list to store data
@@ -68,9 +70,9 @@ class ODriveCAN:
 
         # Flush the CAN Bus of any previous messages
         self.flush_can_buffer()
-
-        # Set the Odrive to closed axis state control
-        self.closed_loop_control()
+        if self.closed_loop_control_flag:
+            # Set the Odrive to closed axis state control
+            self.closed_loop_control()
 
 
 
@@ -159,7 +161,7 @@ class ODriveCAN:
             data=struct.pack('<fhh', float(position), velocity_feedforward, torque_feedforward),
             is_extended_id=False
         ))
-        print(f"Successfully moved ODrive {self.nodeID} to {position}")
+        #print(f"Successfully moved ODrive {self.nodeID} to {position}")
         
 
     # Function to set velocity for a specific O-Drive
