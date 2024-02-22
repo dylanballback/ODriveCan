@@ -29,11 +29,13 @@ class ODriveCAN:
         database           (str): The path to the database file used for storing O-Drive data. Defaults to 'odrive_data.db'.
         axis_state_name    (str): The default axis state to which the O-Drive should be set. Defaults to "closed_loop_control".
         running            (bool): A flag indicating if the main event loop is running.
+        active_error       (list of str): The current active error/s of the O-Drive will be added to this list. 
+        disarm_reason      (list of str): The last error/s that occured on the O-Drive to cause it to disarm will be added to this list. 
+                                          (Once the O-Drive is disarmed, the active error will be none and you will have to check this.) 
 
     Methods:
         initCanBus():            Initializes the CAN bus connection.
         flush_can_buffer():      Clears all messages from the CAN bus.
-        closed_loop_control():   Sets the O-Drive to closed-loop control mode.
         bus_shutdown():          Shuts down the CAN bus safely.
         setAxisState():          Sets the state of the O-Drive axis.
         set_controller_mode():   Sets the control and input modes of the O-Drive.
@@ -103,7 +105,10 @@ class ODriveCAN:
             mechanical_power=None,
             error_messages = None,
             database='odrive_data.db',
-            axis_state_name = "closed_loop_control"):
+            axis_state_name = "closed_loop_control",
+            active_error = None,
+            disarm_reason = None
+            ):
     
         self.canBusID = canBusID
         self.canBusType = canBusType
@@ -126,7 +131,11 @@ class ODriveCAN:
         self.electrical_power = electrical_power
         self.mechanical_power = mechanical_power
         self.error_messages = error_messages
-        self.axis_state_name = axis_state_name
+        self.axis_state_name = axis_state_name,
+        self.active_error = active_error,
+        self.disarm_reason = disarm_reason
+    
+    
     
     def initCanBus(self):
         """
@@ -446,7 +455,7 @@ class ODriveCAN:
         Sets the position of the ODrive motor.
 
         Para:
-            position (float): Target position for the motor.
+            position (float): Target position for the motor in Revs.
             velocity_feedforward (float): Feedforward velocity, default is 0.
             torque_feedforward (float): Feedforward torque, default is 0.
 
@@ -468,11 +477,11 @@ class ODriveCAN:
         Sets the velocity of the ODrive motor.
 
         Para:
-            velocity (float): Target velocity for the motor.
+            velocity (float): Target velocity for the motor in Rev/sec.
             torque_feedforward (float): Feedforward torque, default is 0.
 
         Example:
-            >>> odrive_can.set_velocity(500.0)
+            >>> odrive_can.set_velocity(2.0)
         """
 
         self.canBus.send(can.Message(
@@ -488,10 +497,10 @@ class ODriveCAN:
         Sets the torque of the ODrive motor.
 
         Para:
-            torque (float): Target torque for the motor.
+            torque (float): Target torque for the motor in Nm.
 
         Example:
-            >>> odrive_can.set_torque(10.0)
+            >>> odrive_can.set_torque(0.1)
         """
         
         self.canBus.send(can.Message(
@@ -575,18 +584,22 @@ class ODriveCAN:
             # Decode and print active errors
             if active_errors != 0:  # Check if there are any active errors
                 errors = [description for code, description in self.ERROR_CODES.items() if active_errors & code]
-                error_messages = ', '.join(errors)
-                print(f"ODrive {self.nodeID} Active Errors: {error_messages}")
+                self.active_error = ', '.join(errors)
+                print(f"ODrive {self.nodeID} Active Errors: {self.active_error}")
+                #Do I want to set self.running to flase here so it will stop datacollection loop running? 
             else:
-                print(f"ODrive {self.nodeID} No active errors.")
+                #print(f"ODrive {self.nodeID} No active errors.")
+                pass
             
             # Decode and print disarm reason
             if disarm_reason != 0:  # Check if there is a disarm reason
                 reasons = [description for code, description in self.ERROR_CODES.items() if disarm_reason & code]
-                reason_messages = ', '.join(reasons)
-                print(f"ODrive {self.nodeID} Disarm Reason: {reason_messages}")
+                self.disarm_reason = ', '.join(reasons)
+                print(f"ODrive {self.nodeID} Disarm Reason: {self.disarm_reason}")
+                #Do I want to set self.running to flase here so it will stop datacollection loop running? 
             else:
-                print(f"ODrive {self.nodeID} No disarm reason.")
+                #print(f"ODrive {self.nodeID} No disarm reason.")
+                pass
 
 
     #This is aysnc receiving the messages from the can bus and feeding them into the process_can_message method.
