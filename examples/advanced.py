@@ -54,27 +54,13 @@ async def controller(odrive):
             velocity = 1.0
             odrive.set_velocity(velocity)
             print(f"Set velocity to {velocity} (rev/s) on {odrive.nodeID}")
-<<<<<<< HEAD
-<<<<<<< HEAD
-            odrive.estop()
-            print("Estopped")
-            await asyncio.sleep(3) #Wait 1 second 
-=======
             odrive.estop()
             print("Estopped")
             await asyncio.sleep(3) #Wait 1 second
->>>>>>> cd4516bf23bc709d0623a38985b4d07db185b719
             odrive.clear_errors(identify=False)
             print("Cleared Errors")
             await asyncio.sleep(3)
             odrive.setAxisState("closed_loop_control")
-<<<<<<< HEAD
-=======
-            await asyncio.sleep(3) #Wait 1 second 
-
->>>>>>> 9a495bd537c9a7ddadb846b0629004f316497cf6
-=======
->>>>>>> cd4516bf23bc709d0623a38985b4d07db185b719
             #Set O-Drive to torque control
             odrive.set_controller_mode("torque_control")
             print("Set O-Drive to Torque Control.")
@@ -84,11 +70,7 @@ async def controller(odrive):
             torque = 0.1
             odrive.set_torque(torque)
             print(f"Set torque to {torque} (Nm) on {odrive.nodeID}")
-<<<<<<< HEAD
-            await asyncio.sleep(3) #Wait 1 second 
-=======
             await asyncio.sleep(3) #Wait 1 second
->>>>>>> cd4516bf23bc709d0623a38985b4d07db185b719
 
         #Test if we can set axis state to idle.
        # odrive.setAxisState("idle")
