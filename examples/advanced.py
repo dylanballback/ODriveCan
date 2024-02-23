@@ -103,7 +103,6 @@ async def main():
         # Trigger an emergency stop on keyboard interrupt
         print("Keyboard interrupt received, sending e-stop...")
         odrive.estop()
-        await asyncio.sleep(1)  # Give some time for e-stop command to be processed
         odrive.running = False  # Stop the loop
         odrive.bus_shutdown()  # Shutdown the bus properly
         print("ODrive emergency stop has been issued.")
