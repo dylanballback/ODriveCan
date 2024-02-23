@@ -37,24 +37,24 @@ async def controller(odrive):
             #Set O-Drive to position control
             odrive.set_controller_mode("position_control")
             print("Set O-Drive to Position Control.")
-            await asyncio.sleep(1) #Wait 1 second
+            await asyncio.sleep(3) #Wait 1 second
             
             # Set motor to a specific position
             position = 20
             odrive.set_position(position)
             print(f"Set position to {position} (revs) on {odrive.nodeID}")
-            await asyncio.sleep(1) #Wait 1 second            
+            await asyncio.sleep(3) #Wait 1 second            
             
             #Set O-Drive to velocity control
             odrive.set_controller_mode("velocity_control")
             print("Set O-Drive to Velocity Control.")
-            await asyncio.sleep(1) #Wait 1 second
+            await asyncio.sleep(3) #Wait 1 second
 
             # Set motor velocity
             velocity = 1.0
             odrive.set_velocity(velocity)
             print(f"Set velocity to {velocity} (rev/s) on {odrive.nodeID}")
-            await asyncio.sleep(1) #Wait 1 second 
+            await asyncio.sleep(3) #Wait 1 second 
 
             #Set O-Drive to torque control
             odrive.set_controller_mode("torque_control")
