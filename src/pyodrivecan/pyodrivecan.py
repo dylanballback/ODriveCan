@@ -212,20 +212,20 @@ class ODriveCAN:
         """
         # Mapping from state names to their corresponding codes
         state_codes = {
-            "undefined": 0x0,
-            "idle": 0x1,
-            "startup_sequence": 0x2,
-            "full_calibration_sequence": 0x3,
-            "motor_calibration": 0x4,
-            "encoder_index_search": 0x6,
-            "encoder_offset_calibration": 0x7,
-            "closed_loop_control": 0x8,
-            "lockin_spin": 0x9,
-            "encoder_dir_find": 0xA,
-            "homing": 0xB,
-            "encoder_hall_polarity_calibration": 0xC,
-            "encoder_hall_phase_calibration": 0xD,
-            "anticogging_calibration": 0xE,
+            "undefined": 0,
+            "idle": 1,
+            "startup_sequence": 2,
+            "full_calibration_sequence": 3,
+            "motor_calibration": 4,
+            "encoder_index_search": 6,
+            "encoder_offset_calibration": 7,
+            "closed_loop_control": 8,
+            "lockin_spin": 9,
+            "encoder_dir_find": 10,
+            "homing": 11,
+            "encoder_hall_polarity_calibration": 12,
+            "encoder_hall_phase_calibration": 13,
+            "anticogging_calibration": 14
         }
 
         # Reverse mapping from codes to state names for reporting purposes
