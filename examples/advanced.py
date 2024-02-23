@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 """
 This is an example on how to use some of the methods inside the pyodrivecan class.
-    
+
     Define an object of the class with its nodeID and initalize it:
     - pyodrivecan.ODriveCAN(#nodeID)
     - initCanBus()
@@ -12,16 +12,16 @@ This is an example on how to use some of the methods inside the pyodrivecan clas
     - set_controller_mode()
         - position
         - velocity
-        - torque 
+        - torque
 
-    - set_position()    
+    - set_position()
     - set_velocity()
     - set_torque()
 
     If keyboard inturrenpt the O-Drive will use the E-Stop method:
     - estop()
 
-    At the start of the program it will use the Clear Errors method to ensure their is no remaining error like from the E-Stop. 
+    At the start of the program it will use the Clear Errors method to ensure their is no remaining error like from the E-Stop.
     - clear_errors()
 
 """
@@ -38,13 +38,13 @@ async def controller(odrive):
             odrive.set_controller_mode("position_control")
             print("Set O-Drive to Position Control.")
             await asyncio.sleep(3) #Wait 1 second
-            
+
             # Set motor to a specific position
             position = 20
             odrive.set_position(position)
             print(f"Set position to {position} (revs) on {odrive.nodeID}")
-            await asyncio.sleep(3) #Wait 1 second            
-            
+            await asyncio.sleep(3) #Wait 1 second
+
             #Set O-Drive to velocity control
             odrive.set_controller_mode("velocity_control")
             print("Set O-Drive to Velocity Control.")
@@ -55,17 +55,26 @@ async def controller(odrive):
             odrive.set_velocity(velocity)
             print(f"Set velocity to {velocity} (rev/s) on {odrive.nodeID}")
 <<<<<<< HEAD
+<<<<<<< HEAD
             odrive.estop()
             print("Estopped")
             await asyncio.sleep(3) #Wait 1 second 
+=======
+            odrive.estop()
+            print("Estopped")
+            await asyncio.sleep(3) #Wait 1 second
+>>>>>>> cd4516bf23bc709d0623a38985b4d07db185b719
             odrive.clear_errors(identify=False)
             print("Cleared Errors")
             await asyncio.sleep(3)
             odrive.setAxisState("closed_loop_control")
+<<<<<<< HEAD
 =======
             await asyncio.sleep(3) #Wait 1 second 
 
 >>>>>>> 9a495bd537c9a7ddadb846b0629004f316497cf6
+=======
+>>>>>>> cd4516bf23bc709d0623a38985b4d07db185b719
             #Set O-Drive to torque control
             odrive.set_controller_mode("torque_control")
             print("Set O-Drive to Torque Control.")
@@ -75,7 +84,11 @@ async def controller(odrive):
             torque = 0.1
             odrive.set_torque(torque)
             print(f"Set torque to {torque} (Nm) on {odrive.nodeID}")
+<<<<<<< HEAD
             await asyncio.sleep(3) #Wait 1 second 
+=======
+            await asyncio.sleep(3) #Wait 1 second
+>>>>>>> cd4516bf23bc709d0623a38985b4d07db185b719
 
         #Test if we can set axis state to idle.
        # odrive.setAxisState("idle")
@@ -92,7 +105,7 @@ async def main():
     try:
         # Initialize CAN bus
         odrive.initCanBus()
-        
+
         # Clear errors on the O-Drive
         odrive.clear_errors(identify=False)
         print("Cleared errors on ODrive, waiting for 3 seconds...")
@@ -113,7 +126,7 @@ async def main():
         odrive.bus_shutdown()  # Shutdown the bus properly
         print("ODrive emergency stop has been issued.")
     finally:
-        # This will run whether there was an exception or not           
+        # This will run whether there was an exception or not
         odrive.running = False  # Stop the loop
         odrive.bus_shutdown()  # Shutdown the bus properly
         print("Program has been stopped.")
@@ -122,3 +135,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
