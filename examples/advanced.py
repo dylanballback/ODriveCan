@@ -1,6 +1,7 @@
 import pyodrivecan
 import asyncio
 from datetime import datetime, timedelta
+import time
 
 """
 This is an example on how to use some of the methods inside the pyodrivecan class.
@@ -103,8 +104,10 @@ async def main():
         # Trigger an emergency stop on keyboard interrupt
         print("Keyboard interrupt received, sending e-stop...")
         odrive.estop()
+        time.sleep(1)
         odrive.running = False  # Stop the loop
         odrive.bus_shutdown()  # Shutdown the bus properly
+        time.sleep(2)
         print("ODrive emergency stop has been issued.")
     finally:
         # This will run whether there was an exception or not
