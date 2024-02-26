@@ -147,36 +147,39 @@ class ODriveCAN:
 #----------------------------- CAN Bus Setup for Raspberry Pi START -----------------------------------------
     def try_candump(self):
         """
-        Attempt to dump CAN messages to verify if the CAN interface is operational, and print the messages if successful.
-        
-        This method uses the `candump` command, a utility from the Linux CAN (SocketCAN) tools, which listens to the CAN interface for messages and prints them to the standard output. 
-        The command is used here to verify that the CAN interface (`can0` by default) is correctly configured and operational by capturing a snapshot of the CAN traffic.
-        
-        The `candump` command is executed with the following parameters:
-        - `candump`: The command name.
-        - `self.canBusID`: The CAN interface to listen on (e.g., `can0`). This is dynamically set based on the object's `canBusID` attribute.
-        - `-xct z`: A combination of options to format the output. `-x` includes extra message details, `-c` enables color output (ignored here since we capture output in text), `-t z` uses zero-based timestamps for each message.
-        - `-n 10`: This option limits the output to the first 10 messages captured on the CAN bus, ensuring the method quickly checks interface activity without indefinitely waiting for messages.
-        
-        If the command successfully captures at least 10 messages, it indicates the CAN interface is operational, and the captured messages are printed. 
-        If the command fails or does not capture enough messages, it suggests the CAN interface may not be properly configured or operational.
-        
+        Attempts to verify the operational status of the CAN interface by dumping CAN messages using the `candump` command. 
+        This method checks if the specified CAN interface is receiving messages, which indicates it is correctly configured and operational.
+
+        The `candump` command is part of the Linux CAN (SocketCAN) tools and is utilized here to listen on the specified CAN interface for incoming messages, printing them to the standard output. 
+        The successful capture and printing of messages serve as confirmation that the CAN interface is active and capable of participating in CAN communication.
+
+        Parameters:
+        - `self.canBusID`: Specifies the CAN interface to listen to (e.g., `can0`). The interface ID is set based on the object's `canBusID` attribute, allowing dynamic selection of the CAN interface.
+
+        The method executes `candump` with these options:
+        - `-xct z`: Formats the output by including extra message details (`-x`), enabling color output (which is ignored here due to capture in text form) (`-c`), and using zero-based timestamps for each message (`-t z`).
+        - `-n 10`: Limits the output to the first 10 messages detected on the CAN bus. This constraint ensures a quick verification of interface activity without indefinitely waiting for messages.
+
         Returns:
-            bool: True if the CAN interface is operational and at least 10 messages were captured, False otherwise.
+        - `bool`: True if the CAN interface is confirmed operational by capturing at least one message. 
+                False is returned if the `candump` command fails, times out, or does not capture any messages, suggesting the interface may not be properly configured or operational.
+
+        Note:
+        The method initially aimed to verify the capture of at least 10 messages as an indication of operational status. 
+        However, it has been adjusted to consider the interface operational if at least one message is captured, reflecting a more lenient and practical approach to verifying interface activity.
         """
         dump_command = ["candump", self.canBusID, "-xct", "z", "-n", "10"]
         try:
             dump_output = subprocess.run(dump_command, check=True, capture_output=True, text=True, timeout=5)
             lines = dump_output.stdout.splitlines()
-            if len(lines) >= 10:
+            if len(lines) > 0:
                 print("CAN interface is operational. Captured messages:")
                 for line in lines:
                     print(line)
                 return True
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-            print(f"CAN interface is not operational or candump command failed. Error: {e}")
+            print(f"CAN interface might not be operational or `candump` command failed. Error: {e}")
         return False
-
 
     def setup_can_interface(self):
         """
