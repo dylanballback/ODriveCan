@@ -17,6 +17,9 @@ if __name__ == "__main__":
     # Initialize the odrive object 
     odrive.initCanBus()
 
+    #Set O-Drive to torque control
+    odrive.set_controller_mode("torque_control")
+
     # This will use the run method to pass in the async controller function
     #and automatically run the odrive 
     odrive.run(controller(odrive))
