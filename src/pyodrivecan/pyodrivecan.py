@@ -176,6 +176,7 @@ class ODriveCAN:
                 print("CAN interface is operational. Captured messages:")
                 for line in lines:
                     print(line)
+                ODriveCAN.can_setup_done = True #Set can setup flag true so another instance doesn't run this again.
                 return True
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
             print(f"CAN interface might not be operational or `candump` command failed. Error: {e}")
@@ -183,9 +184,10 @@ class ODriveCAN:
 
     def setup_can_interface(self):
         """
-        Set up the CAN interface for communication, with reset and restart if necessary.
+        Attempts to set up the CAN interface only if it's not already operational and will reset and restart if necessary.
 
-        This method attempts to configure the CAN interface (specified by `self.canBusID`, typically `can0`) for communication by setting its bitrate and ensuring it's operational. 
+        This method first checks if the CAN interface is operational by attempting to dump CAN messages.
+        If messages are successfully dumped, indicating the interface is operational, the method exits without making changes.
         If the interface is already in use or encounters an error, the method attempts to reset and restart the interface before trying the setup again. 
         After a successful setup, it verifies the operational status of the interface by capturing CAN messages.
 
@@ -211,6 +213,11 @@ class ODriveCAN:
         Raises:
             Exception: If the setup process fails after retrying, including after a reset and restart attempt.
         """
+        # First, check if the CAN interface is already operational.
+        if self.try_candump():
+            print(f"CAN interface {self.canBusID} is already operational. Skipping setup.")
+            return
+
         # Commands for setting up, resetting, and restarting the CAN interface
         setup_command = ["sudo", "ip", "link", "set", self.canBusID, "up", "type", "can", "bitrate", "250000"]
         reset_command = ["sudo", "/sbin/ip", "link", "set", self.canBusID, "down"]
@@ -219,29 +226,29 @@ class ODriveCAN:
        
         
         try:
+            # Attempt to set up the CAN interface
             subprocess.run(setup_command, check=True, stderr=subprocess.PIPE, text=True)
             print("CAN interface setup successfully.")
-            ODriveCAN.can_setup_done = True
-            # Verify setup with candump
-            if self.try_candump():
-                print("CAN setup verified successfully.")
-            else:
-                raise Exception("Failed to verify CAN setup.")
+            # Mark the setup as done to prevent future attempts within this instance
+            ODriveCAN.can_setup_done = True #Set can setup flag true so another instance doesn't run this again.
         except subprocess.CalledProcessError as e:
             if "Device or resource busy" in e.stderr:
                 print("Device or resource busy, attempting to reset and restart...")
+                # Reset and restart the CAN interface
                 subprocess.run(reset_command, check=True)
                 subprocess.run(restart_command, check=True)
                 print("CAN interface restart attempted. Retrying setup...")
+                # Retry the setup command
                 subprocess.run(setup_command, check=True)
                 # Verify setup with candump again
                 if self.try_candump():
+                    ODriveCAN.can_setup_done = True # Again, set flag true only after successful verification
                     print("CAN setup verified successfully after reset and restart.")
-                    ODriveCAN.can_setup_done = True
                 else:
                     raise Exception("Failed to verify CAN setup after reset and restart.")
             else:
                 print(f"Error setting up CAN interface: {e.stderr}")
+                raise
 
 #----------------------------- CAN Bus Setup for Raspberry Pi END -----------------------------------------
 
