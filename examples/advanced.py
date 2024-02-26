@@ -33,44 +33,56 @@ async def controller(odrive):
         #Run for set time delay example runs for 15 seconds.
         stop_at = datetime.now() + timedelta(seconds=15)
         while datetime.now() < stop_at:
-            await asyncio.sleep(0) #Need this for async to work.
+
             #Set O-Drive to position control
             odrive.set_controller_mode("position_control")
             print("Set O-Drive to Position Control.")
-            await asyncio.sleep(3) #Wait 1 second
+            await asyncio.sleep(3) #Wait 3 second
 
             # Set motor to a specific position
-            position = 20
+            position = 20 #Rev
             odrive.set_position(position)
             print(f"Set position to {position} (revs) on {odrive.nodeID}")
-            await asyncio.sleep(3) #Wait 1 second
+            await asyncio.sleep(3) #Wait 3 second
+
+
 
             #Set O-Drive to velocity control
             odrive.set_controller_mode("velocity_control")
             print("Set O-Drive to Velocity Control.")
-            await asyncio.sleep(3) #Wait 1 second
+            await asyncio.sleep(3) #Wait 3 second
 
             # Set motor velocity
-            velocity = 1.0
+            velocity = 1.0 #Rev/sec
             odrive.set_velocity(velocity)
             print(f"Set velocity to {velocity} (rev/s) on {odrive.nodeID}")
+
+            #Test E-Stop Method.
             odrive.estop()
             print("Estopped")
-            await asyncio.sleep(3) #Wait 1 second
+            await asyncio.sleep(3) #Wait 3 second
+
+            #Clear the error rasied from calling the E-Stop method above
             odrive.clear_errors(identify=False)
             print("Cleared Errors")
-            await asyncio.sleep(3)
+            await asyncio.sleep(3) #Wait 3 second
+
+            #After the E-Stop and Clear Errror the O-Drive will be in an Idle Statee
+            #Need to set axis state back to closed loop control
             odrive.setAxisState("closed_loop_control")
+
+
+
             #Set O-Drive to torque control
             odrive.set_controller_mode("torque_control")
             print("Set O-Drive to Torque Control.")
-            await asyncio.sleep(3) #Wait 1 second
+            await asyncio.sleep(3) #Wait 3 second
 
             # Set motor torque
-            torque = 0.1
+            torque = 0.1 #Nm
             odrive.set_torque(torque)
             print(f"Set torque to {torque} (Nm) on {odrive.nodeID}")
-            await asyncio.sleep(3) #Wait 1 second
+            await asyncio.sleep(3) #Wait 3 second
 
         #Test if we can set axis state to idle.
        # odrive.setAxisState("idle")
@@ -88,12 +100,13 @@ async def main():
         # Initialize CAN bus
         odrive.initCanBus()
 
-        # Clear errors on the O-Drive
+        # Clear errors on the O-Drive (This will clear the E-Stop Error if the program was previously Keyboard Interrupted)
         odrive.clear_errors(identify=False)
         print("Cleared errors on ODrive, waiting for 3 seconds...")
         await asyncio.sleep(3)  # Wait 3 seconds to ensure errors are cleared
 
         # Add the ODrive to the async loop and run the controller
+        # The odrive loop runs all the asyncio code that automatically recieves CAN data and stores it in a Sqlite Database.
         await asyncio.gather(
             odrive.loop(),
             controller(odrive)

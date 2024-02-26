@@ -139,6 +139,7 @@ class ODriveCAN:
         # Check if the CAN setup is already done by any instance
         if not ODriveCAN.can_setup_done:
             self.setup_can_interface()
+            time.sleep(1)
             # The CAN setup will be attempted by setup_can_interface
         else:
             print("CAN bus setup already completed by another instance.")
@@ -171,6 +172,7 @@ class ODriveCAN:
         dump_command = ["candump", self.canBusID, "-xct", "z", "-n", "10"]
         try:
             dump_output = subprocess.run(dump_command, check=True, capture_output=True, text=True, timeout=5)
+            print(dump_output)
             lines = dump_output.stdout.splitlines()
             if len(lines) > 0:
                 print("CAN interface is operational. Captured messages:")
@@ -213,10 +215,7 @@ class ODriveCAN:
         Raises:
             Exception: If the setup process fails after retrying, including after a reset and restart attempt.
         """
-        # First, check if the CAN interface is already operational.
-        if self.try_candump():
-            print(f"CAN interface {self.canBusID} is already operational. Skipping setup.")
-            return
+        
 
         # Commands for setting up, resetting, and restarting the CAN interface
         setup_command = ["sudo", "ip", "link", "set", self.canBusID, "up", "type", "can", "bitrate", "250000"]
@@ -226,11 +225,15 @@ class ODriveCAN:
        
         
         try:
+            # First, check if the CAN interface is already operational.
+            if self.try_candump():
+                print(f"CAN interface {self.canBusID} is already operational. Skipping setup.")
+                return  # Exit the method early if CAN interface is operational.
             # Attempt to set up the CAN interface
             subprocess.run(setup_command, check=True, stderr=subprocess.PIPE, text=True)
             print("CAN interface setup successfully.")
             # Mark the setup as done to prevent future attempts within this instance
-            ODriveCAN.can_setup_done = True #Set can setup flag true so another instance doesn't run this again.
+            ODriveCAN.can_setup_done = True  # Set can setup flag true so another instance doesn't run this again.
         except subprocess.CalledProcessError as e:
             if "Device or resource busy" in e.stderr:
                 print("Device or resource busy, attempting to reset and restart...")
@@ -242,7 +245,7 @@ class ODriveCAN:
                 subprocess.run(setup_command, check=True)
                 # Verify setup with candump again
                 if self.try_candump():
-                    ODriveCAN.can_setup_done = True # Again, set flag true only after successful verification
+                    ODriveCAN.can_setup_done = True  # Again, set flag true only after successful verification
                     print("CAN setup verified successfully after reset and restart.")
                 else:
                     raise Exception("Failed to verify CAN setup after reset and restart.")
@@ -767,13 +770,70 @@ class ODriveCAN:
             await asyncio.sleep(0)
         return self.velocity
 
+
     #This is the async loop that runs the receve_msgs and save_data methods async.
+    #Use when you only have Muiltiple Instance Of ODriveCAN Class
     async def loop(self, *others):
+        """
+        Asynchronously runs the main event loop for the ODriveCAN class.
+
+        This method gathers and runs multiple asynchronous tasks concurrently it is designed to be use when you have muiltiple objects. 
+        Where each object continuously receive CAN messages and save data to the database while also executing any
+        additional asynchronous tasks passed to it.
+
+        Parameters:
+            others (tuple): Additional coroutine functions to be run concurrently with the main
+                            tasks of receiving CAN messages and saving data. These coroutines could
+                            include custom logic like a PID controller or other async function you would
+                            would need to concurrently run while still collecting & storing O-Drive Data.
+
+        The primary tasks that run in the event loop are:
+            - `self.recv_all()`: An asynchronous method that continuously receives and processes CAN
+                                 messages from the ODrive device.
+            - `self.save_data()`: An asynchronous method that periodically saves the received data
+                                  to the configured database.
+
+        Usage:
+            When you have muiltiple objects of the ODriveCAN Class and you want to run them all concurrently.
+            Below is an example on how to have 2 objects `odrive1`, `odrive2`, and a custom async function `async_user_PID_control_func`
+            Using the await asyncio.gather() will receive & collect all data for Odrive1 and Odrive2 concurrently while also running the users
+            custom ayncio function like a pid controller which you would want to run concurrently. 
+
+        Example:
+            >>> await asyncio.gather(odrive1.loop(), odrive2.loop(), async_user_PID_control_func())
+            ...
+        
+        """
         await asyncio.gather(
             self.recv_all(),
             self.save_data(),
             *others,
         )
 
+
+    #Use when you only have Single Instance Of ODriveCAN Class
     def run(self, *others):
+        """
+        Starts the main event loop for the ODriveCAN class using asyncio.
+
+        This method serves as the entry point to begin asynchronous operations for the ODriveCAN
+        class. It initializes and runs the main event loop by calling the `loop` method and passing
+        any additional coroutines specified by the caller.
+
+        This method is only really useful when you have a single instance of the class. 
+
+        Parameters:
+            others (tuple): Additional coroutine functions to be run concurrently with the main
+                            event loop. These are passed directly to the `loop` method.
+
+        Usage:
+            To start the ODriveCAN operations along with any custom asynchronous tasks, call this
+            method with the tasks as arguments. For example:
+
+                odrive_can_instance.run(custom_task1(), custom_task2())
+
+            This will start the main event loop and run `custom_task1` and `custom_task2` concurrently
+            with the default tasks of receiving CAN messages and saving data.
+        """
         asyncio.run(self.loop(*others))
+
