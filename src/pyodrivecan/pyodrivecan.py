@@ -88,6 +88,9 @@ class ODriveCAN:
         # Start the asynchronous event loop
         odrive.run()
     """
+    # Class variable to track CAN bus setup status
+    can_setup_done = False
+
     def __init__(
             self,
             nodeID,
@@ -132,8 +135,15 @@ class ODriveCAN:
         self.error_messages = error_messages
         self.active_error = active_error
         self.disarm_reason = disarm_reason
-        self.setup_can_interface() #At the start of initalizeding the oject it will automatically check if the CAN Interface on the pi is set up correctly.
-    
+        #At the start of initalizeding the oject it will automatically check if the CAN Interface on the pi is set up correctly.
+        # Check if the CAN setup is already done by any instance
+        if not ODriveCAN.can_setup_done:
+            self.setup_can_interface()
+            # The CAN setup will be attempted by setup_can_interface
+        else:
+            print("CAN bus setup already completed by another instance.")
+
+
 #----------------------------- CAN Bus Setup for Raspberry Pi START -----------------------------------------
     
     def setup_can_interface(self):
@@ -158,6 +168,7 @@ class ODriveCAN:
             # Attempt to setup the CAN interface
             subprocess.run(setup_command, check=True, stderr=subprocess.PIPE, text=True)
             print("CAN interface setup successfully.")
+            ODriveCAN.can_setup_done = True  # Mark the setup as done so every instance of the class doesnt rerun the can interface setup.
             # After successful setup, run the candump command
             self.run_candump_command(dump_command)
         except subprocess.CalledProcessError as e:
@@ -172,6 +183,7 @@ class ODriveCAN:
                 try:
                     subprocess.run(setup_command, check=True)
                     print("CAN interface setup successfully after reset and restart.")
+                    ODriveCAN.can_setup_done = True  # Mark the setup as done so every instance of the class doesnt rerun the can interface setup.
                     # Run the candump command after successful setup
                     self.run_candump_command(dump_command)
                 except subprocess.CalledProcessError as e_retry:
