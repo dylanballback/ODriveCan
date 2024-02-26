@@ -2,8 +2,9 @@ import pyodrivecan
 import asyncio
 
 async def controller(odrive):
-        odrive.set_torque(0.2)
+        odrive.set_torque(0.1)
         await asyncio.sleep(15)
+        odrive.set_torque(0)
         odrive.running = False
         
 
@@ -12,5 +13,3 @@ if __name__ == "__main__":
     odrive = pyodrivecan.ODriveCAN(0)
     odrive.initCanBus()
     odrive.run(controller(odrive))
-
-    

@@ -145,74 +145,102 @@ class ODriveCAN:
 
 
 #----------------------------- CAN Bus Setup for Raspberry Pi START -----------------------------------------
-    
+    def try_candump(self):
+        """
+        Attempt to dump CAN messages to verify if the CAN interface is operational, and print the messages if successful.
+        
+        This method uses the `candump` command, a utility from the Linux CAN (SocketCAN) tools, which listens to the CAN interface for messages and prints them to the standard output. 
+        The command is used here to verify that the CAN interface (`can0` by default) is correctly configured and operational by capturing a snapshot of the CAN traffic.
+        
+        The `candump` command is executed with the following parameters:
+        - `candump`: The command name.
+        - `self.canBusID`: The CAN interface to listen on (e.g., `can0`). This is dynamically set based on the object's `canBusID` attribute.
+        - `-xct z`: A combination of options to format the output. `-x` includes extra message details, `-c` enables color output (ignored here since we capture output in text), `-t z` uses zero-based timestamps for each message.
+        - `-n 10`: This option limits the output to the first 10 messages captured on the CAN bus, ensuring the method quickly checks interface activity without indefinitely waiting for messages.
+        
+        If the command successfully captures at least 10 messages, it indicates the CAN interface is operational, and the captured messages are printed. 
+        If the command fails or does not capture enough messages, it suggests the CAN interface may not be properly configured or operational.
+        
+        Returns:
+            bool: True if the CAN interface is operational and at least 10 messages were captured, False otherwise.
+        """
+        dump_command = ["candump", self.canBusID, "-xct", "z", "-n", "10"]
+        try:
+            dump_output = subprocess.run(dump_command, check=True, capture_output=True, text=True, timeout=5)
+            lines = dump_output.stdout.splitlines()
+            if len(lines) >= 10:
+                print("CAN interface is operational. Captured messages:")
+                for line in lines:
+                    print(line)
+                return True
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+            print(f"CAN interface is not operational or candump command failed. Error: {e}")
+        return False
+
+
     def setup_can_interface(self):
         """
-        Attempts to set up the CAN interface for communication. If the interface is busy,
-        it resets and restarts the interface before trying to set it up again. After successful
-        setup, it runs a CAN dump command to verify communication.
+        Set up the CAN interface for communication, with reset and restart if necessary.
 
-        The method follows these steps:
-        1. Try to set up the CAN interface with the specified bitrate.
-        2. If the interface is busy, reset and restart the interface, then retry setup.
-        3. Upon successful setup, execute the candump command to capture and print CAN messages.
+        This method attempts to configure the CAN interface (specified by `self.canBusID`, typically `can0`) for communication by setting its bitrate and ensuring it's operational. 
+        If the interface is already in use or encounters an error, the method attempts to reset and restart the interface before trying the setup again. 
+        After a successful setup, it verifies the operational status of the interface by capturing CAN messages.
+
+        The method executes several commands to configure the CAN interface:
+        
+        1. Setup Command:
+            - `sudo ip link set can0 up type can bitrate 250000`: This command configures the CAN interface `can0` with a specified bitrate (250000 bits per second in this example). 
+            It sets the interface type to CAN and brings it up, making it ready for communication.
+        
+        2. Reset Command:
+            - `sudo /sbin/ip link set can0 down`: This command brings the CAN interface `can0` down, effectively resetting its configuration. 
+            This is useful for clearing any existing state before attempting to reconfigure the interface.
+        
+        3. Restart Command:
+            - `sudo ip link set can0 type can restart-ms 100`: After resetting, this command sets the interface to automatically restart in case of errors, with a restart delay specified by `restart-ms` (100 milliseconds in this case). 
+            This helps in recovering from transient errors without manual intervention.
+        
+        If the initial setup attempt detects the interface as "busy," indicating it's already in use or cannot be configured as requested, the method performs a reset followed by a restart command before attempting the setup again. 
+        This ensures that any lingering issues are cleared and the interface is correctly configured for CAN communication.
+
+        After successfully configuring the interface, the method verifies the setup by attempting to capture CAN messages, ensuring the interface is fully operational and ready for use.
+
+        Raises:
+            Exception: If the setup process fails after retrying, including after a reset and restart attempt.
         """
         # Commands for setting up, resetting, and restarting the CAN interface
         setup_command = ["sudo", "ip", "link", "set", self.canBusID, "up", "type", "can", "bitrate", "250000"]
         reset_command = ["sudo", "/sbin/ip", "link", "set", self.canBusID, "down"]
         restart_command = ["sudo", "ip", "link", "set", self.canBusID, "type", "can", "restart-ms", "100"]
         # Command to dump CAN messages for verification
-        dump_command = ["candump", self.canBusID, "-xct", "z", "-n", "10"]
+       
         
         try:
-            # Attempt to setup the CAN interface
             subprocess.run(setup_command, check=True, stderr=subprocess.PIPE, text=True)
             print("CAN interface setup successfully.")
-            ODriveCAN.can_setup_done = True  # Mark the setup as done so every instance of the class doesnt rerun the can interface setup.
-            # After successful setup, run the candump command
-            self.run_candump_command(dump_command)
+            ODriveCAN.can_setup_done = True
+            # Verify setup with candump
+            if self.try_candump():
+                print("CAN setup verified successfully.")
+            else:
+                raise Exception("Failed to verify CAN setup.")
         except subprocess.CalledProcessError as e:
-            # Check if the error is due to the interface being busy
             if "Device or resource busy" in e.stderr:
                 print("Device or resource busy, attempting to reset and restart...")
-                # Reset and restart the CAN interface
                 subprocess.run(reset_command, check=True)
                 subprocess.run(restart_command, check=True)
                 print("CAN interface restart attempted. Retrying setup...")
-                # Retry the setup command after reset and restart
-                try:
-                    subprocess.run(setup_command, check=True)
-                    print("CAN interface setup successfully after reset and restart.")
-                    ODriveCAN.can_setup_done = True  # Mark the setup as done so every instance of the class doesnt rerun the can interface setup.
-                    # Run the candump command after successful setup
-                    self.run_candump_command(dump_command)
-                except subprocess.CalledProcessError as e_retry:
-                    print(f"Error during CAN interface retry setup after restart: {e_retry.stderr}")
-                    raise Exception("CAN interface setup failed after retry.")
+                subprocess.run(setup_command, check=True)
+                # Verify setup with candump again
+                if self.try_candump():
+                    print("CAN setup verified successfully after reset and restart.")
+                    ODriveCAN.can_setup_done = True
+                else:
+                    raise Exception("Failed to verify CAN setup after reset and restart.")
             else:
                 print(f"Error setting up CAN interface: {e.stderr}")
-                raise Exception("CAN interface setup failed.")
-
-    def run_candump_command(self, dump_command):
-        """
-        Executes the candump command to capture and print CAN bus messages.
-
-        Parameters:
-            dump_command (list): The command and its arguments to execute candump.
-
-        This method captures the first 10 messages on the CAN bus and prints them
-        to verify that the CAN interface is correctly receiving messages.
-        """
-        try:
-            # Execute the candump command and capture its output
-            dump_output = subprocess.run(dump_command, check=True, capture_output=True, text=True)
-            print("CAN dump successful. Output:")
-            print(dump_output.stdout)
-        except subprocess.CalledProcessError as e:
-            print(f"Error dumping CAN messages: {e.stderr}")
 
 #----------------------------- CAN Bus Setup for Raspberry Pi END -----------------------------------------
-
 
 
     
