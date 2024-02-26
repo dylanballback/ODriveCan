@@ -3,6 +3,7 @@ import asyncio
 import can
 import struct
 import time
+import subprocess
 
 
 
@@ -131,8 +132,77 @@ class ODriveCAN:
         self.error_messages = error_messages
         self.active_error = active_error
         self.disarm_reason = disarm_reason
+        self.setup_can_interface() #At the start of initalizeding the oject it will automatically check if the CAN Interface on the pi is set up correctly.
     
+#----------------------------- CAN Bus Setup for Raspberry Pi START -----------------------------------------
     
+    def setup_can_interface(self):
+        """
+        Attempts to set up the CAN interface for communication. If the interface is busy,
+        it resets and restarts the interface before trying to set it up again. After successful
+        setup, it runs a CAN dump command to verify communication.
+
+        The method follows these steps:
+        1. Try to set up the CAN interface with the specified bitrate.
+        2. If the interface is busy, reset and restart the interface, then retry setup.
+        3. Upon successful setup, execute the candump command to capture and print CAN messages.
+        """
+        # Commands for setting up, resetting, and restarting the CAN interface
+        setup_command = ["sudo", "ip", "link", "set", self.canBusID, "up", "type", "can", "bitrate", "250000"]
+        reset_command = ["sudo", "/sbin/ip", "link", "set", self.canBusID, "down"]
+        restart_command = ["sudo", "ip", "link", "set", self.canBusID, "type", "can", "restart-ms", "100"]
+        # Command to dump CAN messages for verification
+        dump_command = ["candump", self.canBusID, "-xct", "z", "-n", "10"]
+        
+        try:
+            # Attempt to setup the CAN interface
+            subprocess.run(setup_command, check=True, stderr=subprocess.PIPE, text=True)
+            print("CAN interface setup successfully.")
+            # After successful setup, run the candump command
+            self.run_candump_command(dump_command)
+        except subprocess.CalledProcessError as e:
+            # Check if the error is due to the interface being busy
+            if "Device or resource busy" in e.stderr:
+                print("Device or resource busy, attempting to reset and restart...")
+                # Reset and restart the CAN interface
+                subprocess.run(reset_command, check=True)
+                subprocess.run(restart_command, check=True)
+                print("CAN interface restart attempted. Retrying setup...")
+                # Retry the setup command after reset and restart
+                try:
+                    subprocess.run(setup_command, check=True)
+                    print("CAN interface setup successfully after reset and restart.")
+                    # Run the candump command after successful setup
+                    self.run_candump_command(dump_command)
+                except subprocess.CalledProcessError as e_retry:
+                    print(f"Error during CAN interface retry setup after restart: {e_retry.stderr}")
+                    raise Exception("CAN interface setup failed after retry.")
+            else:
+                print(f"Error setting up CAN interface: {e.stderr}")
+                raise Exception("CAN interface setup failed.")
+
+    def run_candump_command(self, dump_command):
+        """
+        Executes the candump command to capture and print CAN bus messages.
+
+        Parameters:
+            dump_command (list): The command and its arguments to execute candump.
+
+        This method captures the first 10 messages on the CAN bus and prints them
+        to verify that the CAN interface is correctly receiving messages.
+        """
+        try:
+            # Execute the candump command and capture its output
+            dump_output = subprocess.run(dump_command, check=True, capture_output=True, text=True)
+            print("CAN dump successful. Output:")
+            print(dump_output.stdout)
+        except subprocess.CalledProcessError as e:
+            print(f"Error dumping CAN messages: {e.stderr}")
+
+#----------------------------- CAN Bus Setup for Raspberry Pi END -----------------------------------------
+
+
+
     
     def initCanBus(self):
         """
@@ -140,6 +210,8 @@ class ODriveCAN:
 
         canBusID (String): Default "can0" this is the name of the can interface
         canBus (String): Default "socketcan" this is the python can libary CAN type
+
+        This will first clear all the buffer messages on the CAN bus, then it will set the axis state to the default "closed_loop_control"
         """
          # Create and assign the CAN bus interface object to self.canBus
         self.canBus = can.interface.Bus(self.canBusID, bustype=self.canBusType)
