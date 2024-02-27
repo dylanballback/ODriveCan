@@ -17,7 +17,6 @@ In this example I will be using a Raspberry Pi 2 Zero W with the WaveShare RS485
 ### 1. Power source
 ![Power Source Configuration](images/01.png)
 
-
 ### 2. Motor 
 ![Motor Configuration](images/02.png)
 

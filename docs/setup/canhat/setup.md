@@ -18,13 +18,13 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
 </div>
 
 ### 2. Edit `config.txt` file  
-1. Open terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
+Open terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
 
     ```Bash
     sudo nano /boot/config.txt
     ```
 
-2. Uncomment `#dtparam=spi=on` and  add the following line below it:
+Uncomment `#dtparam=spi=on` and  add the following line below it:
     ```bash
     dtparam=spi=on
 
