@@ -1,16 +1,13 @@
 # ODriveCan
 
-!!! Info This is a tutorial page on how to configure your O-Drive S1 or Pro in order to use this package. 
-    If this is your first time using your O-Drive, I strongly recommend to see the [O-Drive Documentation](https://docs.odriverobotics.com/v/latest/guides/getting-started.html)  
-    and start with their tutorial and using the web GUI to get your motor spinning for the first time.
+!!! info This is a tutorial page on how to configure your O-Drive S1 or Pro in order to use this package. 
+    If this is your first time using your O-Drive, I strongly recommend to see the [O-Drive Documentation](https://docs.odriverobotics.com/v/latest/guides/getting-started.html)  and start with their tutorial and using the web GUI to get your motor spinning for the first time.
 
-    In this example I will be using a Raspberry Pi 2 Zero W with the WaveShare RS485 CAN HAT.
+In this example I will be using a Raspberry Pi 2 Zero W with the WaveShare RS485 CAN HAT.
 
 
 !!! Tip 
     If you have not already set up your Raspberry Pi with the [WaveShare RS485 CAN HAT](https://www.amazon.com/RS485-CAN-HAT-Long-Distance-Communication/dp/B07VMB1ZKH/ref=sr_1_3?crid=1DIYQ9H0DCFZX&keywords=waveshare+RS485+CAN+HAT&qid=1707694015&s=electronics&sprefix=waveshare+rs485+can+hat+%2Celectronics%2C97&sr=1-3), please visit this page here to see how to do so: [Raspberry Pi CAN Hat Setup](./piCANHatSetup.md)
-
-&nbsp;
 
 ## O-Drive GUI Configuration 
 
@@ -19,36 +16,23 @@
     You can check your O-Drive Firmware when connected to the GUI on the bottom left corner:
     ![O-Drive Version >= v0.6.9](images/10.png)
 
-&nbsp;
-
 ### 1. Power Source
-
-
 ![Power Source Configuration](images/01.png)
 
-&nbsp;
+
 ### 2. Motor 
-
-
 ![Motor Configuration](images/02.png)
 
-&nbsp;
-### 3. Encoder 
 
+### 3. Encoder 
 ![Encoder Configuration](images/03.png)
 
-
-&nbsp;
 ### 4. Control mode
-
 ![Control Mode Configuration](images/04.png)
 
-
-&nbsp;
 ### 5. Interfaces 
 ![CAN Inerface Configuration](images/05.png)
 
-&nbsp;
 ### 6. Apply and Calibrate 
 
 !!! warning
@@ -57,7 +41,7 @@
     ![DC_Undervoltage_warning](images/06.png)
 
 
-!!!  success
+!!! success
 
     ![O-Drive Version >= v0.6.9](images/07.png)
 
@@ -67,6 +51,6 @@
 
 
 ### Congratulations 
-!!!  success
+!!! success
 
     ![Save powers_msg_rate_set configuration](images/09.png)

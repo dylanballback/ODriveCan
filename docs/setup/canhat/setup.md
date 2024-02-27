@@ -19,7 +19,6 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
     <img src="https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/setup/canhat/images/01.jpg" alt="Front CAN Hat on Pi" style="width: 46%; margin-right: 2%;">
     <img src="https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/setup/canhat/images/02.jpg" alt="Back CAN Hat on Pi" style="width: 49.2%;">
 </div>
-&nbsp;
 
 ### 2. Edit `config.txt` File  
 1. Open terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
@@ -37,8 +36,6 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
     !!! Example
         ![User Defined Table Example Results](images/03.png)
 
-&nbsp;
-
 ### 3. Update Raspberry Pi   
 Ensure your Pi is all up to date:
 ```Bash
@@ -46,14 +43,12 @@ sudo apt-get upgrade
 
 sudo apt-get update 
 ```
-&nbsp;
 
 ### 4. Reboot Pi 
 Once both those have completed we need to reboot the Pi for the edits in the `config.txt` file to work:
 ```Bash
 sudo reboot
 ```
-&nbsp;
 
 ### 5. Check if the `config.txt` file is correct
 After your Pi has restarted you can use the following command to check if the `config.txt` file is correct:
@@ -63,15 +58,12 @@ dmesg | grep -i '\(can\|spi\)'
 !!! Success
     ![Check if config.txt was successfully edited](images/04.png)
 
-&nbsp;
-&nbsp;
 
 ### 6. Install CAN dependencies
 Now we need to install some packages for the CAN Communication to work on the Pi with Python:
 ```bash
 sudo apt-get install can-utils
 ```
-&nbsp;
 
 Then we will need to pip install `python-can`:
 ```bash
@@ -81,7 +73,6 @@ pip3 install python-can
     If you get an error and don't have pip run the command `sudo apt-get install python3-pip` to install it.
     Then re-run `pip3 install python-can` command.
 
-
 ## Result
 !!! success "Congratulations you have successfully set up your Pi with its CAN Hat"
 
@@ -89,8 +80,6 @@ pip3 install python-can
 
     [Next page](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
 
-
-&nbsp;
 
 !!! info "Source O-Drive Docs / WaveShare Wiki"
     I would like to thank WaveShare for their documentation and tutorial on how to set this up: [WaveShare CAN Hat Wiki](https://www.waveshare.com/wiki/RS485_CAN_HAT)
