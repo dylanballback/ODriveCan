@@ -7,15 +7,15 @@ This page I will go through the components that I am currently using for my exam
 !!! Note The [WaveShare RS485 CAN HAT](https://www.amazon.com/RS485-CAN-HAT-Long-Distance-Communication/dp/B07VMB1ZKH/ref=sr_1_3?crid=1DIYQ9H0DCFZX&keywords=waveshare+RS485+CAN+HAT&qid=1707694015&s=electronics&sprefix=waveshare+rs485+can+hat+%2Celectronics%2C97&sr=1-3) is required to control an O-Drive S1/Pro using CAN Bus with a Raspberry Pi.
     
     It is compatible with Raspberry Pi 4B/3B+/3B/2B/B+/A+/Zero/Zero W/WH/Zero 2W Series Boards.
-&nbsp;
 
-I am using a Raspberry Pi 2 Zero W but you can use any of the Pi models listed above.
+    I am using a Raspberry Pi 2 Zero W but you can use any of the Pi models listed above.
+
 
 
 ***
 
 
-### Setup CAN Hat 
+### 1. Setup CAN Hat 
 
 Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. It should look something like this:
 <div>
@@ -24,7 +24,7 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
 </div>
 &nbsp;
 
-##### We then need to open up the terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
+#### 2. We then need to open up the terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
 
 ```Bash
 sudo nano /boot/config.txt
@@ -32,14 +32,14 @@ sudo nano /boot/config.txt
 
 
 
-##### Go Down until you see the line `#dtparam=spi=on` and we need to uncomment it and add one more line below it:
+#### 3.  Uncomment `#dtparam=spi=on` and  add the following line below it:
 ```bash
 dtparam=spi=on
 
 dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
 ```
-
-![User Defined Table Example Results](media/pi_setup/config_file.png)
+!!! Example
+    ![User Defined Table Example Results](media/pi_setup/config_file.png)
 
 &nbsp;
 
@@ -61,7 +61,9 @@ sudo reboot
 ```Bash
 dmesg | grep -i '\(can\|spi\)'
 ```
-![Check if config.txt was successfully edited](media/pi_setup/config_txt_check.png)
+!!! Success
+    <img src="media/pi_setup/config_txt_check.png" alt="Check if config.txt was successfully edited" style="width: 100%;">
+
 
 
 
@@ -93,6 +95,12 @@ pip3 install python-can
 &nbsp;
 &nbsp;
 &nbsp;
+
+!!! success Congratulations you have successfully set up your Pi with its CAN Hat. 
+    [Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!](./ODriveSetup.md)
+
+
+
 &nbsp;
 &nbsp;
 &nbsp;
