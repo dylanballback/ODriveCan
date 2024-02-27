@@ -43,6 +43,7 @@ markdown_extensions:
   - md_in_html
   - admonition
   - pymdownx.details
+  - pymdownx.superfences
   
 
 
@@ -60,10 +61,11 @@ markdown_extensions:
 
 # Plugins
 plugins:
-  - glightbox
+  - glightbox #Plugin to allow for zoom on images 
   - search:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
-
-  #Plugin to allow for zoom on images    
-  - glightbox
  
+
+# Extra CSS
+extra_css:
+  - css/extra.css
