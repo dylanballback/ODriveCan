@@ -4,8 +4,6 @@ repo_url: https://github.com/dylanballback/ODriveCan
 theme:
   name: material
   features:
-    - navigation.expand
-    - navigation.sections
     - content.code.copy #Copy Code Block Icon
   
   palette: 
