@@ -24,26 +24,27 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
 </div>
 &nbsp;
 
-#### 2. We then need to open up the terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
+#### 2. Edit `config.txt` File  
+1. Open terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
 
-```Bash
-sudo nano /boot/config.txt
-```
+    ```Bash
+    sudo nano /boot/config.txt
+    ```
 
+2. Uncomment `#dtparam=spi=on` and  add the following line below it:
+    ```bash
+    dtparam=spi=on
 
-
-#### 3.  Uncomment `#dtparam=spi=on` and  add the following line below it:
-```bash
-dtparam=spi=on
-
-dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
-```
-!!! Example
-    ![User Defined Table Example Results](media/pi_setup/config_file.png)
+    dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
+    ```
+    !!! Example
+        ![User Defined Table Example Results](media/pi_setup/config_file.png)
 
 &nbsp;
 
-#####  Once this is complete I recommend running these two commands to ensure your Pi is all up to date:
+##### 3. Update Raspberry Pi   
+
+Ensure your Pi is all up to date:
 ```Bash
 sudo apt-get upgrade
 
@@ -51,7 +52,8 @@ sudo apt-get update
 ```
 &nbsp;
 
-##### Once both those have completed we need to reboot the Pi for the edits in the `config.txt` file to work:
+##### 
+Once both those have completed we need to reboot the Pi for the edits in the `config.txt` file to work:
 ```Bash
 sudo reboot
 ```
@@ -87,9 +89,7 @@ pip3 install python-can
 ```
 !!! failure pip3 not found 
     If you get an error and don't have pip run the command `sudo apt-get install python3-pip` to install it.
-    Then re-run the pipi3 install `python-can` command.
-
-
+    Then re-run `pip3 install python-can` command.
 
 
 

@@ -68,4 +68,4 @@ plugins:
 
 # Extra CSS
 extra_css:
-  - css/extra.css
+  - docs/css/extra.css
