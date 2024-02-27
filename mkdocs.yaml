@@ -65,7 +65,3 @@ plugins:
   - search:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
  
-
-# Extra CSS
-extra_css:
-  - docs/css/extra.css
