@@ -2,15 +2,14 @@
 
 This page I will go through the components that I am currently using for my examples and how to set them up.
 
-!!! note The [WaveShare RS485 CAN HAT](https://www.amazon.com/RS485-CAN-HAT-Long-Distance-Communication/dp/B07VMB1ZKH/ref=sr_1_3?crid=1DIYQ9H0DCFZX&keywords=waveshare+RS485+CAN+HAT&qid=1707694015&s=electronics&sprefix=waveshare+rs485+can+hat+%2Celectronics%2C97&sr=1-3) is required to control an O-Drive S1/Pro using CAN Bus with a Raspberry Pi.
+!!! note 
+    The [WaveShare RS485 CAN HAT](https://www.amazon.com/RS485-CAN-HAT-Long-Distance-Communication/dp/B07VMB1ZKH/ref=sr_1_3?crid=1DIYQ9H0DCFZX&keywords=waveshare+RS485+CAN+HAT&qid=1707694015&s=electronics&sprefix=waveshare+rs485+can+hat+%2Celectronics%2C97&sr=1-3) is required to control an O-Drive S1/Pro using CAN Bus with a Raspberry Pi.
     
-    It is compatible with Raspberry Pi 4B/3B+/3B/2B/B+/A+/Zero/Zero W/WH/Zero 2W Series Boards.
+It is compatible with Raspberry Pi 4B/3B+/3B/2B/B+/A+/Zero/Zero W/WH/Zero 2W Series Boards. I am using a Raspberry Pi 2 Zero W but you can use any of the Pi models listed above.
 
-    I am using a Raspberry Pi 2 Zero W but you can use any of the Pi models listed above.
+## Setup steps:
 
-## Setup Steps:
-
-### 1. Setup CAN Hat 
+### 1. Setup CAN hat 
 
 Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. It should look something like this:
 <div>
@@ -18,7 +17,7 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
     <img src="https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/setup/canhat/images/02.jpg" alt="Back CAN Hat on Pi" style="width: 49.2%;">
 </div>
 
-### 2. Edit `config.txt` File  
+### 2. Edit `config.txt` file  
 1. Open terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
 
     ```Bash
@@ -34,7 +33,7 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
     !!! Example
         ![User Defined Table Example Results](images/03.png)
 
-### 3. Update Raspberry Pi   
+### 3. Update raspberry pi   
 Ensure your Pi is all up to date:
 ```Bash
 sudo apt-get upgrade
@@ -42,14 +41,14 @@ sudo apt-get upgrade
 sudo apt-get update 
 ```
 
-### 4. Reboot Pi 
+### 4. Reboot pi 
 Once both those have completed we need to reboot the Pi for the edits in the `config.txt` file to work:
 ```Bash
 sudo reboot
 ```
 
-### 5. Check if the `config.txt` file is correct
-After your Pi has restarted you can use the following command to check if the `config.txt` file is correct:
+### 5. Check 
+Check if the `config.txt` file is correct/after your Pi has restarted. You can use the following command to check if the `config.txt` file is correct:
 ```Bash
 dmesg | grep -i '\(can\|spi\)'
 ```
