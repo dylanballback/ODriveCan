@@ -6,6 +6,7 @@ theme:
   features:
     - navigation.expand
     - navigation.sections
+    - content.code.copy #Copy Code Block Icon
   
   palette: 
     # Palette toggle for light mode
@@ -32,12 +33,19 @@ nav:
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
   - tables
   - attr_list
   - md_in_html
+  - admonition
+  - pymdownx.details
+  
+
+
 
 
   # Icons
