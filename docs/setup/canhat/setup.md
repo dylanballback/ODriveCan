@@ -10,21 +10,18 @@ This page I will go through the components that I am currently using for my exam
 
     I am using a Raspberry Pi 2 Zero W but you can use any of the Pi models listed above.
 
-
-
-***
-
+## Setup Steps:
 
 ### 1. Setup CAN Hat 
 
 Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. It should look something like this:
 <div>
-    <img src="https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/media/pi_setup/pi_with_CAN_hat_front.jpg" alt="Front CAN Hat on Pi" style="width: 46%; margin-right: 2%;">
-    <img src="https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/media/pi_setup/pi_with_CAN_hat_back.jpg" alt="Back CAN Hat on Pi" style="width: 49.2%;">
+    <img src="https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/setup/canhat/images/01.jpg" alt="Front CAN Hat on Pi" style="width: 46%; margin-right: 2%;">
+    <img src="https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/setup/canhat/images/02.jpg" alt="Back CAN Hat on Pi" style="width: 49.2%;">
 </div>
 &nbsp;
 
-#### 2. Edit `config.txt` File  
+### 2. Edit `config.txt` File  
 1. Open terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
 
     ```Bash
@@ -38,12 +35,11 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
     dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
     ```
     !!! Example
-        ![User Defined Table Example Results](media/pi_setup/config_file.png)
+        ![User Defined Table Example Results](images/03.png)
 
 &nbsp;
 
-##### 3. Update Raspberry Pi   
-
+### 3. Update Raspberry Pi   
 Ensure your Pi is all up to date:
 ```Bash
 sudo apt-get upgrade
@@ -52,35 +48,32 @@ sudo apt-get update
 ```
 &nbsp;
 
-##### 4. Reboot Pi 
+### 4. Reboot Pi 
 Once both those have completed we need to reboot the Pi for the edits in the `config.txt` file to work:
 ```Bash
 sudo reboot
 ```
 &nbsp;
 
-##### 5. Check if the `config.txt` file is correct
+### 5. Check if the `config.txt` file is correct
 After your Pi has restarted you can use the following command to check if the `config.txt` file is correct:
 ```Bash
 dmesg | grep -i '\(can\|spi\)'
 ```
 !!! Success
-    <img src="![media/pi_setup/config_txt_check.png](https://raw.githubusercontent.com/dylanballback/ODriveCan/main/docs/media/pi_setup/config_txt_check.png)" alt="Check if config.txt was successfully edited" style="width: 100%;">
-
+    ![Check if config.txt was successfully edited](images/04.png)
 
 &nbsp;
 &nbsp;
 
-
-
-
-#### Now we need to install some packages for the CAN Communication to work on the Pi with Python:
+### 6. Install CAN dependencies
+Now we need to install some packages for the CAN Communication to work on the Pi with Python:
 ```bash
 sudo apt-get install can-utils
 ```
 &nbsp;
 
-#### Then we will need to pip install `python-can`:
+Then we will need to pip install `python-can`:
 ```bash
 pip3 install python-can
 ```
@@ -89,24 +82,17 @@ pip3 install python-can
     Then re-run `pip3 install python-can` command.
 
 
+## Result
+!!! success "Congratulations you have successfully set up your Pi with its CAN Hat"
+
+    Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!
+
+    [Next page](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
 
 
 &nbsp;
-&nbsp;
-&nbsp;
 
-!!! success "Congratulations you have successfully set up your Pi with its CAN Hat."
-    [**Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
-
-
-
-&nbsp;
-&nbsp;
-&nbsp;
-
-
-
-!!! info Source O-Drive Docs / WaveShare Wiki
+!!! info "Source O-Drive Docs / WaveShare Wiki"
     I would like to thank WaveShare for their documentation and tutorial on how to set this up: [WaveShare CAN Hat Wiki](https://www.waveshare.com/wiki/RS485_CAN_HAT)
 
     Along with the official O-Drive Documentation also reiterates how to set up the WaveShare RS485 CAN HAT: [Official O-Drive CAN Guide](https://docs.odriverobotics.com/v/latest/guides/can-guide.html)

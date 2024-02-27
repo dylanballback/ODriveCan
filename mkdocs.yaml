@@ -26,9 +26,10 @@ theme:
 
 nav:
   - Home: index.md
-  - O-Drive Setup: ODriveSetup.md
-  - Raspberry Pi CAN Hat Setup: piCANHatSetup.md
-  - Create Custom Database Table/Update: database_userDefinedTable.md
+  - Setup:
+    - O-Drive: setup/odrive/setup.md
+    - Raspberry Pi CAN Hat: setup/canhat/setup.md
+  - Database: database/database.md
 
 markdown_extensions:
   - pymdownx.highlight:

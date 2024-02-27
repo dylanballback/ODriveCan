@@ -4,7 +4,6 @@
     If this is your first time using your O-Drive, I strongly recommend to see the [O-Drive Documentation](https://docs.odriverobotics.com/v/latest/guides/getting-started.html)  
     and start with their tutorial and using the web GUI to get your motor spinning for the first time.
 
-  
     In this example I will be using a Raspberry Pi 2 Zero W with the WaveShare RS485 CAN HAT.
 
 
@@ -15,68 +14,59 @@
 
 ## O-Drive GUI Configuration 
 
-!!! warning O-Drive Firmware >= v0.6.9 to use the pyodrivecan package.
+!!! warning "O-Drive Firmware >= v0.6.9 to use the pyodrivecan package."
      
     You can check your O-Drive Firmware when connected to the GUI on the bottom left corner:
-    <img src="media/odrivesetup/odrive_versionv0.6.9_annotated.png" alt="O-Drive Version >= v0.6.9" style="width: 60%; margin-left: 0%;">
-    
+    ![O-Drive Version >= v0.6.9](images/10.png)
 
 &nbsp;
 
 ### 1. Power Source
 
 
-![Power Source Configuration](media/odrivesetup/POWER_SOURCE_Configuration_ANNOTATED.png)
+![Power Source Configuration](images/01.png)
 
 &nbsp;
 ### 2. Motor 
 
 
-![Motor Configuration](media/odrivesetup/MOTOR_Configuration_ANNOTATED.png)
+![Motor Configuration](images/02.png)
 
 &nbsp;
 ### 3. Encoder 
 
-![Encoder Configuration](media/odrivesetup/ENCODER_Configuration_ANNOTATED.png)
+![Encoder Configuration](images/03.png)
 
 
 &nbsp;
 ### 4. Control mode
 
-![Control Mode Configuration](media/odrivesetup/CONTROL_MODE_Configuration_ANNOTATED.png)
+![Control Mode Configuration](images/04.png)
 
 
 &nbsp;
 ### 5. Interfaces 
-
-
-<img src="media/odrivesetup/INTERFACES_Configuration_ANNOTATED.png" alt="CAN Inerface Configuration" style="margin-left: 20px;">
-
-
+![CAN Inerface Configuration](images/05.png)
 
 &nbsp;
 ### 6. Apply and Calibrate 
 
 !!! warning
     If you have your O-Drive powered by a power supply/battery and want to plug in the USB, you need to have a [USB Isolator](https://odriverobotics.com/shop/usb-isolator).
-    ![DC_Undervoltage_warning](media/odrivesetup/APPLY&CALIBRATE_Configuration_noDCBusVoltage_Error_ANNOTATED.png)
+
+    ![DC_Undervoltage_warning](images/06.png)
 
 
 !!!  success
 
-    ![O-Drive Version >= v0.6.9](media/odrivesetup/APPLY&CALIBRATE_COMPLETED_Configuration_ANNOTATED.png)
+    ![O-Drive Version >= v0.6.9](images/07.png)
 
 
+### 7. Set `powers_msg_rate_ms` in Inspector Tab
+![Set powers_msg_rate_set to 10 ms](images/08.png)
 
 
-&nbsp;
-#### 7. Set `powers_msg_rate_ms` in Inspector Tab
-
-
-![Set powers_msg_rate_set to 10 ms](media/odrivesetup/INSPECTOR_pwrs_msg_rate_set_ANNOTATED_pt1.png)
-
+### Congratulations 
 !!!  success
 
-    ![Save powers_msg_rate_set configuration](media/odrivesetup/INSPECTOR_save_configuration_ANNOTATED.png)
-
-#### Congratulations 
+    ![Save powers_msg_rate_set configuration](images/09.png)

@@ -43,7 +43,7 @@ database.insert_into_user_defined_table(table_name, columns, values)
 
 #### Results:
 
-![User Defined Table Example Results](media/databaseMedia/ODriveCAN_example_database.png)
+![User Defined Table Example Results](images/01.png)
 
 As you can see in the image above, the package will automatically handle setting up the 
 trial_id as your foriegn key to link the data between the ODriveData table and your custom user defined table. 
