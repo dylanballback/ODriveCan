@@ -2,12 +2,31 @@
 
 This page I will go through the components that I am currently using for my examples and how to set them up.
 
-!!! note 
+!!! info 
     The [WaveShare RS485 CAN HAT](https://www.amazon.com/RS485-CAN-HAT-Long-Distance-Communication/dp/B07VMB1ZKH/ref=sr_1_3?crid=1DIYQ9H0DCFZX&keywords=waveshare+RS485+CAN+HAT&qid=1707694015&s=electronics&sprefix=waveshare+rs485+can+hat+%2Celectronics%2C97&sr=1-3) is required to control an O-Drive S1/Pro using CAN Bus with a Raspberry Pi.
     
     It is compatible with Raspberry Pi 4B/3B+/3B/2B/B+/A+/Zero/Zero W/WH/Zero 2W Series Boards. I am using a Raspberry Pi 2 Zero W but you can use any of the Pi models listed above.
 
 ## Setup steps:
+
+??? tip "If you have not yet flashed your Pi OS Click Here."
+    1. [Install Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+    ![Install Raspberry Pi Imager](images/05.png)
+    2. Open up Raspberry Pi Imager and Allow it to make changes on your device
+    ![Install Raspberry Pi Imager](images/06.png)
+    3. Select Pi Model, Pi OS, and micro SD Card
+    ![Install Raspberry Pi Imager](images/07.png)
+    4. Select Edit Settings  
+    ![Install Raspberry Pi Imager](images/08.png)
+    5. Enter username, password, Wi-Fi credentials, time zone, keyboard layout.
+    ![Install Raspberry Pi Imager](images/09.png)
+    6. Enable SSH
+    ![Install Raspberry Pi Imager](images/10.png)
+    7. Save and Confirm to write OS
+    ![Install Raspberry Pi Imager](images/11.png)
+    ![Install Raspberry Pi Imager](images/12.png)
+    8. Confirm successful, remove from computer and plug into Pi
+    ![Install Raspberry Pi Imager](images/13.png)
 
 ### 1. Setup CAN hat 
 
@@ -30,7 +49,7 @@ dtparam=spi=on
 dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
 ```
 !!! example
-    ![User Defined Table Example Results](images/03.png)
+    ![edit config.txt example](images/03.png)
 
 ### 3. Update raspberry pi   
 Ensure your Pi is all up to date:
@@ -74,7 +93,7 @@ pip3 install python-can
 
     Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!
 
-    #### [Next page](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
+    [Next page](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
 
 
 ## Sources
