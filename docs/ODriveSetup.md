@@ -1,7 +1,6 @@
 # ODriveCan
 
 !!! Info This is a tutorial page on how to configure your O-Drive S1 or Pro in order to use this package. 
-
     If this is your first time using your O-Drive, I strongly recommend to see the [O-Drive Documentation](https://docs.odriverobotics.com/v/latest/guides/getting-started.html)  
     and start with their tutorial and using the web GUI to get your motor spinning for the first time.
 
