@@ -19,8 +19,8 @@ This page I will go through the components that I am currently using for my exam
 
 Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. It should look something like this:
 <div>
-    <img src="media/pi_setup/pi_with_CAN_hat_front.jpg" alt="Front CAN Hat on Pi" style="width: 46%; margin-right: 2%;">
-    <img src="media/pi_setup/pi_with_CAN_hat_back.jpg" alt="Back CAN Hat on Pi" style="width: 49.2%;">
+    <img src="https://github.com/dylanballback/ODriveCan/blob/main/docs/media/pi_setup/pi_with_CAN_hat_front.jpg" alt="Front CAN Hat on Pi" style="width: 46%; margin-right: 2%;">
+    <img src="https://github.com/dylanballback/ODriveCan/blob/main/docs/media/pi_setup/pi_with_CAN_hat_back.jpg" alt="Back CAN Hat on Pi" style="width: 49.2%;">
 </div>
 &nbsp;
 
@@ -52,23 +52,20 @@ sudo apt-get update
 ```
 &nbsp;
 
-##### 
+##### 4. Reboot Pi 
 Once both those have completed we need to reboot the Pi for the edits in the `config.txt` file to work:
 ```Bash
 sudo reboot
 ```
 &nbsp;
 
-#####  After your Pi has restarted you can use the following command to check if the `config.txt` file is correct:
+##### 5. Check if the `config.txt` file is correct
+After your Pi has restarted you can use the following command to check if the `config.txt` file is correct:
 ```Bash
 dmesg | grep -i '\(can\|spi\)'
 ```
 !!! Success
-    <img src="media/pi_setup/config_txt_check.png" alt="Check if config.txt was successfully edited" style="width: 100%;">
-
-!!! Success
-    <img src="media/pi_setup/config_txt_check.png" alt="Check if config.txt was successfully edited" class="full-width-image">
-
+    <img src="![media/pi_setup/config_txt_check.png](https://github.com/dylanballback/ODriveCan/blob/main/docs/media/pi_setup/config_txt_check.png)" alt="Check if config.txt was successfully edited" style="width: 100%;">
 
 
 &nbsp;
@@ -99,7 +96,7 @@ pip3 install python-can
 &nbsp;
 
 !!! success Congratulations you have successfully set up your Pi with its CAN Hat. 
-    [**Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!](./ODriveSetup.md)
+    [**Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
 
 
 
