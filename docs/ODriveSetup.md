@@ -58,10 +58,12 @@
 ### 6. Apply and Calibrate 
 
 !!! warning
-    If you have your O-Drive powered by a power supply/battery and want to plug in the USB, you need to have a USB Isolator, 
+    If you have your O-Drive powered by a power supply/battery and want to plug in the USB, you need to have a [USB Isolator](https://odriverobotics.com/shop/usb-isolator).
     ![DC_Undervoltage_warning](media/odrivesetup/APPLY&CALIBRATE_Configuration_noDCBusVoltage_Error_ANNOTATED.png)
 
+
 !!!  success
+
     ![O-Drive Version >= v0.6.9](media/odrivesetup/APPLY&CALIBRATE_COMPLETED_Configuration_ANNOTATED.png)
 
 
@@ -74,6 +76,7 @@
 ![Set powers_msg_rate_set to 10 ms](media/odrivesetup/INSPECTOR_pwrs_msg_rate_set_ANNOTATED_pt1.png)
 
 !!!  success
+
     ![Save powers_msg_rate_set configuration](media/odrivesetup/INSPECTOR_save_configuration_ANNOTATED.png)
 
 #### Congratulations 

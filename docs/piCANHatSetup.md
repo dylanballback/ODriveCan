@@ -64,6 +64,8 @@ dmesg | grep -i '\(can\|spi\)'
 !!! Success
     <img src="media/pi_setup/config_txt_check.png" alt="Check if config.txt was successfully edited" style="width: 100%;">
 
+!!! Success
+    <img src="media/pi_setup/config_txt_check.png" alt="Check if config.txt was successfully edited" class="full-width-image">
 
 
 
@@ -97,7 +99,7 @@ pip3 install python-can
 &nbsp;
 
 !!! success Congratulations you have successfully set up your Pi with its CAN Hat. 
-    [Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!](./ODriveSetup.md)
+    [**Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!](./ODriveSetup.md)
 
 
 
