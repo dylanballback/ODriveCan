@@ -19,25 +19,23 @@ Once the Raspberry Pi has the Pi OS on it and the CAN Hat should be installed. I
 
 ### 2. Edit `config.txt` file  
 Open terminal and edit the config file to allow for the Pi to talk to the CAN Hat:
-
-    ```Bash
-    sudo nano /boot/config.txt
-    ```
+```Bash
+sudo nano /boot/config.txt
+```
 
 Uncomment `#dtparam=spi=on` and  add the following line below it:
-    ```bash
-    dtparam=spi=on
+```bash
+dtparam=spi=on
 
-    dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
-    ```
-    !!! Example
-        ![User Defined Table Example Results](images/03.png)
+dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
+```
+!!! example
+    ![User Defined Table Example Results](images/03.png)
 
 ### 3. Update raspberry pi   
 Ensure your Pi is all up to date:
 ```Bash
 sudo apt-get upgrade
-
 sudo apt-get update 
 ```
 
@@ -66,7 +64,8 @@ Then we will need to pip install `python-can`:
 ```bash
 pip3 install python-can
 ```
-!!! failure pip3 not found 
+
+??? failure "pip3 not found"
     If you get an error and don't have pip run the command `sudo apt-get install python3-pip` to install it.
     Then re-run `pip3 install python-can` command.
 
@@ -75,8 +74,10 @@ pip3 install python-can
 
     Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!
 
-    [Next page](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
+    #### [Next page](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
 
+
+## Sources
 
 !!! info "Source O-Drive Docs / WaveShare Wiki"
     I would like to thank WaveShare for their documentation and tutorial on how to set this up: [WaveShare CAN Hat Wiki](https://www.waveshare.com/wiki/RS485_CAN_HAT)
