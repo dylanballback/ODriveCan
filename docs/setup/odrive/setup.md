@@ -27,7 +27,7 @@ In this example I will be using a Raspberry Pi 2 Zero W with the WaveShare RS485
 ![Control Mode Configuration](images/04.png)
 
 ### 5. Interfaces 
-![CAN Inerface Configuration](images/05.png)
+![CAN Interface Configuration](images/05.png)
 
 ### 6. Apply and calibrate 
 
