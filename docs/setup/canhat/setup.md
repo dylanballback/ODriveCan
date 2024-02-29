@@ -100,9 +100,22 @@ Then we will need to pip install `python-can`:
 pip3 install python-can
 ```
 
+Finally, install the `pyodrivecan` package:
+```bash
+pip3 install pyodrivecan
+```
+
 ??? failure "pip3 not found"
     If you get an error and don't have pip run the command `sudo apt-get install python3-pip` to install it.
     Then re-run `pip3 install python-can` command.
+    ![Check if config.txt was successfully edited](images/020.png)
+
+??? warning "WARNING: not on PATH"
+    If you get this warning after you pip3 install python-can, run this command to fix:
+    ```
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+    ```
+    ![Check if config.txt was successfully edited](images/021.png)
 
 ## Result
 !!! success "Congratulations you have successfully set up your Pi with its CAN Hat"
