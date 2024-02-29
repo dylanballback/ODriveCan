@@ -115,7 +115,7 @@ pip3 install pyodrivecan
     ```
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
     ```
-    ![Check if config.txt was successfully edited](images/021.png)
+    ![Check if config.txt was successfully edited](images/21.png)
 
 ## Result
 !!! success "Congratulations you have successfully set up your Pi with its CAN Hat"
