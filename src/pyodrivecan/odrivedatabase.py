@@ -122,7 +122,7 @@ class OdriveDatabase:
             {fk_sql}
         );
         """
-        print(sql)
+        #print(sql)
         # Execute the SQL statement
         self.execute(sql)
 
