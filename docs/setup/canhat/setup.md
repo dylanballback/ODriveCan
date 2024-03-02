@@ -51,7 +51,7 @@ This page I will go through the components that I am currently using for my exam
 
     4. Then enter your Pi user's password:
     ![Enter password](images/17.png)
-    
+
     5. Ready to continue to the tutorial below:
     ![Enter password](images/18.png)
      
@@ -125,7 +125,7 @@ pip3 install pyodrivecan
     ```
     Then re-run pip install python-can command.
     ```bash
-    `pip3 install python-can`
+    pip3 install python-can
     ```
     ![Error: pip3 not found](images/20.png)
 
