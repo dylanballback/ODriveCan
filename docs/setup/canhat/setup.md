@@ -30,9 +30,9 @@ This page I will go through the components that I am currently using for my exam
 
 ??? tip "How to ssh into Pi"
     **Make sure that your pi and device are on the same Wi-Fi network to be able to SSH.**
+
     1. If you are on windows you need to install a software to be able to SSH. [Install PuTTY if you have not already and are using windows.](https://www.putty.org/)
     ![Install PuTTY](images/14.png)
-    
     2. Enter Pi `username@hostname.local` like this `dylan@raspberrypi.local` and select open. 
     ![SSH using Host Name](images/23.png)
 
@@ -47,10 +47,8 @@ This page I will go through the components that I am currently using for my exam
 
     4. If first time opening Putty you will have to Accept a prompt to connect:
     ![Accept prompt if first time.](images/16.png)
-
     5. Then enter your Pi user's password:
     ![Enter password](images/17.png)
-
     6. Ready to continue to the tutorial below:
     ![Enter password](images/18.png)
      
