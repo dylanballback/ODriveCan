@@ -46,11 +46,11 @@ This page I will go through the components that I am currently using for my exam
         B. Open Putty and type Pi username @ the IP address like this `dylan@192.168.1.17` and select Open:
         ![Enter user and IP address to SSH](images/15.png)
 
-    4. If first time opening Putty you will have to Accept a prompt to connect:
+    3. If first time opening Putty you will have to Accept a prompt to connect:
     ![Accept prompt if first time.](images/16.png)
-    5. Then enter your Pi user's password:
+    4. Then enter your Pi user's password:
     ![Enter password](images/17.png)
-    6. Ready to continue to the tutorial below:
+    5. Ready to continue to the tutorial below:
     ![Enter password](images/18.png)
      
 
