@@ -32,9 +32,9 @@ This page I will go through the components that I am currently using for my exam
     **Make sure that your pi and device are on the same Wi-Fi network to be able to SSH.**
 
     If you are on windows you need to install a software to be able to SSH.  
-    [Install PuTTY if you have not already and are using windows.](https://www.putty.org/)
+    1. [Install PuTTY if you have not already and are using windows.](https://www.putty.org/)
     ![Install PuTTY](images/14.png)
-    Enter Pi `username@hostname.local` like this `dylan@raspberrypi.local` and select open. 
+    2. Enter Pi `username@hostname.local` like this `dylan@raspberrypi.local` and select open. 
     ![SSH using Host Name](images/23.png)
 
     ??? warning "If the host name doesn't work here is how you can get the IP Address of the Pi."
@@ -46,11 +46,11 @@ This page I will go through the components that I am currently using for my exam
         B. Open Putty and type Pi username @ the IP address like this `dylan@192.168.1.17` and select Open:
         ![Enter user and IP address to SSH](images/15.png)
 
-    If first time opening Putty you will have to Accept a prompt to connect:
+    3. If first time opening Putty you will have to Accept a prompt to connect:
     ![Accept prompt if first time.](images/16.png)
-    Then enter your Pi user's password:
+    4. Then enter your Pi user's password:
     ![Enter password](images/17.png)
-    Ready to continue to the tutorial below:
+    5. Ready to continue to the tutorial below:
     ![Enter password](images/18.png)
      
 
