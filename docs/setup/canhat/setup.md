@@ -12,7 +12,7 @@ This page I will go through the components that I am currently using for my exam
 ??? tip "If you have not yet flashed your Pi OS Click Here."
     1. [Install Raspberry Pi Imager](https://www.raspberrypi.com/software/)
     ![Install Raspberry Pi Imager](images/05.png)
-    2. Open up Raspberry Pi Imager and Allow it to make changes on your device
+    2. **Open up Raspberry Pi Imager and Allow it to make changes on your device
     ![Install Raspberry Pi Imager](images/06.png)
     3. Select Pi Model, Pi OS, and micro SD Card
     ![Select Pi Model, OS, and micro SD Card](images/22.png)
@@ -106,8 +106,14 @@ pip3 install pyodrivecan
 ```
 
 ??? failure "pip3 not found"
-    If you get an error and don't have pip run the command `sudo apt-get install python3-pip` to install it.
-    Then re-run `pip3 install python-can` command.
+    If you get an error and don't have pip run the following command to install it.
+    ```bash
+    sudo apt-get install python3-pip
+    ```
+    Then re-run pip install python-can command.
+    ```bash
+    `pip3 install python-can`
+    ```
     ![Error: pip3 not found](images/20.png)
 
 ??? warning "WARNING: not on PATH"
