@@ -15,11 +15,11 @@ This page I will go through the components that I am currently using for my exam
     2. Open up Raspberry Pi Imager and Allow it to make changes on your device
     ![Install Raspberry Pi Imager](images/06.png)
     3. Select Pi Model, Pi OS, and micro SD Card
-    ![Install Raspberry Pi Imager](images/07.png)
+    ![Select Pi Model, OS, and micro SD Card](images/22.png)
     4. Select Edit Settings  
-    ![Install Raspberry Pi Imager](images/08.png)
+    ![Edit Pi Settings](images/08.png)
     5. Enter username, password, Wi-Fi credentials, time zone, keyboard layout.
-    ![Install Raspberry Pi Imager](images/09.png)
+    ![Enter in pi credentials](images/09.png)
     6. Enable SSH
     ![Install Raspberry Pi Imager](images/10.png)
     7. Save and Confirm to write OS
@@ -122,7 +122,7 @@ pip3 install pyodrivecan
 
     Now move forward to configure your O-Drive for CAN Bus Control with the pyodrivecan package!
 
-    [Next page](https://dylanballback.github.io/ODriveCan/ODriveSetup/)
+    [Next page](https://dylanballback.github.io/ODriveCan/setup/odrive/setup/)
 
 
 ## Sources

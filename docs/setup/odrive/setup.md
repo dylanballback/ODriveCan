@@ -5,7 +5,7 @@ This is a tutorial page on how to configure your O-Drive S1 or Pro in order to u
 In this example I will be using a Raspberry Pi 2 Zero W with the WaveShare RS485 CAN HAT.
 
 !!! Tip 
-    If you have not already set up your Raspberry Pi with the WaveShare RS485 CAN HAT, please visit this page: [Raspberry Pi CAN Hat Setup](./piCANHatSetup.md)
+    If you have not already set up your Raspberry Pi with the WaveShare RS485 CAN HAT, please visit this page: [Raspberry Pi CAN Hat Setup](https://dylanballback.github.io/ODriveCan/setup/canhat/setup/)
 
 ## O-Drive GUI configuration 
 
