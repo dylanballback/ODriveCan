@@ -83,11 +83,20 @@ dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=25,spimaxfrequency=2000000
 ### 3. Update raspberry pi   
 Ensure your Pi is all up to date:
 ```Bash
-sudo apt-get upgrade
-sudo apt-get update 
+sudo apt-get update
 ```
 
-### 4. Reboot pi 
+### 4. Install `can-utils` dependency
+```bash
+sudo apt-get install can-utils
+```
+
+### 5. Upgrade raspberry pi 
+```Bash
+sudo apt-get upgrade
+```
+
+### 6. Reboot pi 
 Once both those have completed we need to reboot the Pi for the edits in the `config.txt` file to work:
 ```Bash
 sudo reboot
@@ -102,11 +111,8 @@ dmesg | grep -i '\(can\|spi\)'
     ![Check if config.txt was successfully edited](images/04.png)
 
 
-### 6. Install CAN dependencies
-Now we need to install some packages for the CAN Communication to work on the Pi with Python:
-```bash
-sudo apt-get install can-utils
-```
+### 6. Install CAN Python package dependencies
+Now we need to install some Python packages for the CAN Communication to work on the Pi:
 
 Then we will need to pip install `python-can`:
 ```bash
