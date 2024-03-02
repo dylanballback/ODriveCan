@@ -12,7 +12,7 @@ This page I will go through the components that I am currently using for my exam
 ??? tip "If you have not yet flashed your Pi OS Click Here."
     1. [Install Raspberry Pi Imager](https://www.raspberrypi.com/software/)
     ![Install Raspberry Pi Imager](images/05.png)
-    2. **Open up Raspberry Pi Imager and Allow it to make changes on your device
+    2. Open up Raspberry Pi Imager and Allow it to make changes on your device
     ![Install Raspberry Pi Imager](images/06.png)
     3. Select Pi Model, Pi OS, and micro SD Card
     ![Select Pi Model, OS, and micro SD Card](images/22.png)
@@ -48,8 +48,10 @@ This page I will go through the components that I am currently using for my exam
 
     3. If first time opening Putty you will have to Accept a prompt to connect:
     ![Accept prompt if first time.](images/16.png)
+
     4. Then enter your Pi user's password:
     ![Enter password](images/17.png)
+    
     5. Ready to continue to the tutorial below:
     ![Enter password](images/18.png)
      
