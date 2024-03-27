@@ -269,8 +269,7 @@ class ODriveCAN:
          # Create and assign the CAN bus interface object to self.canBus
         self.canBus = can.interface.Bus(self.canBusID, bustype=self.canBusType)
 
-        # Flush the CAN Bus of any previous messages
-        self.flush_can_buffer()
+        #Set Axis State
         self.setAxisState()
         
 
@@ -300,7 +299,7 @@ class ODriveCAN:
         ... Can bus successfully shut down.
         """
 
-        self.canBus.shutdown
+        self.canBus.shutdown()
 
         print("Can bus successfully shut down.")
 
@@ -364,11 +363,15 @@ class ODriveCAN:
 
         try:
             self.flush_can_buffer() #Flush all current can bus messages
-            self.canBus.send(can.Message(
-                arbitration_id=(self.nodeID << 5 | 0x07),  # 0x07: Set_Axis_State command ID
-                data=struct.pack('<B', axis_requested_state),
-                is_extended_id=False
-            ))
+            # Send the set state command with a timeout
+            self.canBus.send(
+                can.Message(
+                    arbitration_id=(self.nodeID << 5 | 0x07),  # 0x07: Set_Axis_State command ID
+                    data=struct.pack('<B', axis_requested_state),
+                    is_extended_id=False
+                ),
+                timeout=0.5  # Timeout of 0.5 seconds
+            )
             print(f"Axis state set command sent for {axis_state_name} ({axis_requested_state}) to ODrive {self.nodeID}.")
             
             # Now we wait for a heartbeat message to confirm the new state
@@ -524,11 +527,14 @@ class ODriveCAN:
         """
         identify_byte = 0x01 if identify else 0x00
         try:
-            self.canBus.send(can.Message(
-                arbitration_id=(self.nodeID << 5 | 0x18),  # 0x18: Clear_Errors Command ID
-                data=struct.pack('<B', identify_byte),
-                is_extended_id=False
-            ))
+            self.canBus.send(
+                can.Message(
+                    arbitration_id=(self.nodeID << 5 | 0x18),  # 0x18: Clear_Errors Command ID
+                    data=struct.pack('<B', identify_byte),
+                    is_extended_id=False
+                ),
+                timeout=0.5 
+            )
             print(f"Cleared errors for ODrive {self.nodeID}. LED flash is {'enabled' if identify else 'disabled'}.")
         except Exception as e:
             print(f"Error sending Clear_Errors command to ODrive {self.nodeID}: {str(e)}")
