@@ -239,8 +239,10 @@ class ODriveCAN:
                 print("Device or resource busy, attempting to reset and restart...")
                 # Reset and restart the CAN interface
                 subprocess.run(reset_command, check=True)
+                time.sleep(2)
                 subprocess.run(restart_command, check=True)
                 print("CAN interface restart attempted. Retrying setup...")
+                time.sleep(2)
                 # Retry the setup command
                 subprocess.run(setup_command, check=True)
                 # Verify setup with candump again
@@ -573,6 +575,104 @@ class ODriveCAN:
             print(f"Set absolute position to {position} revolutions for ODrive {self.nodeID}.")
         except Exception as e:
             print(f"Error sending Set_Absolute_Position command to ODrive {self.nodeID}: {str(e)}")
+
+
+
+
+#-------------------------------------- Motor Trajectory Limits START------------------------------------------------
+    def set_traj_vel_limit(self, vel_limit):
+        """
+        Sets the trajectory velocity limit for the ODrive motor.
+
+        Parameters:
+            vel_limit (float): The desired trajectory velocity limit in revolutions per second (rev/s).
+
+        Example:
+            >>> odrive_can.set_traj_vel_limit(1000.0)
+        """
+        data_bytes = struct.pack('<f', vel_limit)
+        try:
+            self.canBus.send(can.Message(
+                arbitration_id=(self.nodeID << 5 | 0x11),  # Command ID for Set_Traj_Vel_Limit is 0x11
+                data=data_bytes,
+                is_extended_id=False
+            ))
+            print(f"Trajectory velocity limit set to {vel_limit} rev/s for ODrive {self.nodeID}.")
+        except Exception as e:
+            print(f"Error sending trajectory velocity limit command to ODrive {self.nodeID}: {str(e)}")
+
+
+
+    def set_traj_accel_limits(self, accel_limit, decel_limit):
+        """
+        Sets the trajectory acceleration and deceleration limits for the ODrive motor.
+
+        Parameters:
+            accel_limit (float): The desired trajectory acceleration limit in revolutions per second squared (rev/s^2).
+            decel_limit (float): The desired trajectory deceleration limit in revolutions per second squared (rev/s^2).
+
+        Example:
+            >>> odrive_can.set_traj_accel_limits(5000.0, 5000.0)
+        """
+        data_bytes = struct.pack('<ff', accel_limit, decel_limit)
+        try:
+            self.canBus.send(can.Message(
+                arbitration_id=(self.nodeID << 5 | 0x12),  # Command ID for Set_Traj_Accel_Limits is 0x12
+                data=data_bytes,
+                is_extended_id=False
+            ))
+            print(f"Trajectory acceleration limit set to {accel_limit} rev/s^2 and deceleration limit set to {decel_limit} rev/s^2 for ODrive {self.nodeID}.")
+        except Exception as e:
+            print(f"Error sending trajectory acceleration/deceleration limits command to ODrive {self.nodeID}: {str(e)}")
+
+
+    def set_traj_inertia(self, inertia):
+        """
+        Sets the trajectory inertia for the ODrive motor.
+
+        Parameters:
+            inertia (float): The desired trajectory inertia in Nm/(rev/s^2).
+
+        Example:
+            >>> odrive_can.set_traj_inertia(0.1)
+        """
+        data_bytes = struct.pack('<f', inertia)
+        try:
+            self.canBus.send(can.Message(
+                arbitration_id=(self.nodeID << 5 | 0x13),  # Command ID for Set_Traj_Inertia is 0x13
+                data=data_bytes,
+                is_extended_id=False
+            ))
+            print(f"Trajectory inertia set to {inertia} Nm/(rev/s^2) for ODrive {self.nodeID}.")
+        except Exception as e:
+            print(f"Error sending trajectory inertia command to ODrive {self.nodeID}: {str(e)}")
+
+
+
+    def set_limits(self, velocity_limit, current_limit):
+        """
+        Sets the velocity and current limits for the ODrive motor.
+
+        Parameters:
+            velocity_limit (float): The desired velocity limit in revolutions per second (rev/s).
+            current_limit (float): The desired current limit in Amperes (A).
+
+        Example:
+            >>> odrive_can.set_limits(1000.0, 10.0)
+        """
+        data_bytes = struct.pack('<ff', velocity_limit, current_limit)
+        try:
+            self.canBus.send(can.Message(
+                arbitration_id=(self.nodeID << 5 | 0x0f),  # Command ID for Set_Limits is 0x0f
+                data=data_bytes,
+                is_extended_id=False
+            ))
+            print(f"Velocity limit set to {velocity_limit} rev/s and current limit set to {current_limit} A for ODrive {self.nodeID}.")
+        except Exception as e:
+            print(f"Error sending limits command to ODrive {self.nodeID}: {str(e)}")
+
+
+
 
 
 
