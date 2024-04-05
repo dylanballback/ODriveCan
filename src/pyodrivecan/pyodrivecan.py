@@ -15,6 +15,7 @@ class ODriveCAN:
     Attributes:
         canBusID           (str): The CAN Bus ID, which should be "can0" by default. If multiple CAN buses are present on the device, this can be modified accordingly.
         canBusType         (str): The CAN communication type as defined by the python-can package. By default, "socketcan" is used.
+        self.canBitRate    (int): The CAN Bit Rate or Bus Speed, by Default O-Drive GUI has this set to 250000 bits/s
         nodeID             (int): The node ID of the O-Drive controller on the CAN network.
         position           (float, optional): The current position of the motor in revolutions. Defaults to None.
         velocity           (float, optional): The current velocity of the motor in revolutions per second. Defaults to None.
@@ -96,6 +97,7 @@ class ODriveCAN:
             nodeID,
             canBusID="can0",
             canBusType="socketcan",
+            canBitRate=250000,
             position=None,
             velocity=None,
             torque_target=None,
@@ -114,6 +116,7 @@ class ODriveCAN:
     
         self.canBusID = canBusID
         self.canBusType = canBusType
+        self.canBitRate = canBitRate
         self.nodeID = nodeID
         self.canBus = can.interface.Bus(canBusID, bustype=canBusType)
         self.database = OdriveDatabase(database)
@@ -218,7 +221,7 @@ class ODriveCAN:
         
 
         # Commands for setting up, resetting, and restarting the CAN interface
-        setup_command = ["sudo", "ip", "link", "set", self.canBusID, "up", "type", "can", "bitrate", "250000"]
+        setup_command = ["sudo", "ip", "link", "set", self.canBusID, "up", "type", "can", "bitrate", str(self.canBitRate)]
         reset_command = ["sudo", "/sbin/ip", "link", "set", self.canBusID, "down"]
         restart_command = ["sudo", "ip", "link", "set", self.canBusID, "type", "can", "restart-ms", "100"]
         # Command to dump CAN messages for verification
@@ -255,6 +258,7 @@ class ODriveCAN:
                 print(f"Error setting up CAN interface: {e.stderr}")
                 raise
 
+
 #----------------------------- CAN Bus Setup for Raspberry Pi END -----------------------------------------
 
 
@@ -282,11 +286,11 @@ class ODriveCAN:
         Example:
             >>> odrive_can.flush_can_buffer()
             ...
-            ... I have cleared all CAN Messages on the BUS!
+            ... CAN BUS Flushed.
         """
         #Flush CAN RX buffer to ensure no old pending messages.
         while not (self.canBus.recv(timeout=0) is None): pass
-        print("I have cleared all CAN Messages on the BUS!")
+        print("CAN BUS Flushed.")
 
 
     #Shutdown can bus at the end of a program. 
@@ -377,7 +381,7 @@ class ODriveCAN:
             print(f"Axis state set command sent for {axis_state_name} ({axis_requested_state}) to ODrive {self.nodeID}.")
             
             # Now we wait for a heartbeat message to confirm the new state
-            print(f"Waiting for confirmation from ODrive {self.nodeID}...")
+            #print(f"Waiting for confirmation from ODrive {self.nodeID}...")
             start_time = time.time()
             while time.time() - start_time < 5:  # Wait for up to 5 seconds for confirmation
                 msg = self.canBus.recv(timeout=0.5)  # Adjust timeout as needed
@@ -400,6 +404,54 @@ class ODriveCAN:
 
         except Exception as e:
             print(f"Error setting axis state for ODrive {self.nodeID}: {str(e)}")
+
+
+#----------------------------------------- Check Axis State Idle --------------------------------------------------------
+            
+    def is_odrive_idle(self):
+        """
+        Checks if the ODrive is in the IDLE state.
+
+        Returns:
+            bool: True if the ODrive is in the IDLE state, False otherwise.
+        """
+        state_names = {
+            0: "undefined",
+            1: "idle",
+            2: "startup_sequence",
+            3: "full_calibration_sequence",
+            4: "motor_calibration",
+            6: "encoder_index_search",
+            7: "encoder_offset_calibration",
+            8: "closed_loop_control",
+            9: "lockin_spin",
+            10: "encoder_dir_find",
+            11: "homing",
+            12: "encoder_hall_polarity_calibration",
+            13: "encoder_hall_phase_calibration",
+            14: "anticogging_calibration"
+        }
+        idle_state_code = 1  # The code for the IDLE state
+
+        # Send a command to request the current state, or just wait for the next heartbeat message
+        print(f"Checking if ODrive {self.nodeID} is in IDLE state...")
+        start_time = time.time()
+        while time.time() - start_time < 5:  # Wait for up to 5 seconds for a heartbeat message
+            msg = self.canBus.recv(timeout=0.5)  # Adjust timeout as needed
+            if msg and (msg.arbitration_id == (self.nodeID << 5 | 0x01)):  # 0x01: Heartbeat
+                _, state, _, _ = struct.unpack('<IBBB', bytes(msg.data[:7]))
+                if state == idle_state_code:
+                    print(f"ODrive {self.nodeID} is in IDLE state.")
+                    return True
+                else:
+                    actual_state_name = state_names.get(state, "Unknown State")
+                    print(f"ODrive {self.nodeID} is in {actual_state_name} state.")
+                    return False
+            elif msg:
+                continue  # Skip any non-heartbeat messages
+
+        print(f"No state information received from ODrive {self.nodeID}.")
+        return False
 
 
 #----------------------------------------- Set Controller Mode --------------------------------------------------------
@@ -540,6 +592,54 @@ class ODriveCAN:
             print(f"Cleared errors for ODrive {self.nodeID}. LED flash is {'enabled' if identify else 'disabled'}.")
         except Exception as e:
             print(f"Error sending Clear_Errors command to ODrive {self.nodeID}: {str(e)}")
+
+
+#-------------------------------------- Reboot O-Drive  ------------------------------------------------
+
+    def reboot_save(self, action='save'):
+        """
+        Reboots the ODrive or performs related actions based on the specified action parameter.
+
+        Parameters:
+            action (str): The action to be performed, which can be one of the following:
+                        'reboot': Reboot the ODrive.
+                        'save': Save the configuration to persistent storage.
+                        'erase': Erase the configuration.
+                        'dfu': Enter DFU (Device Firmware Upgrade) mode.
+
+        Command ID: 0x16 (Host → ODrive)
+
+        Note: The axis must be in the IDLE state before performing this action.
+        """
+        actions = {
+            'reboot': 0,
+            'save': 1,
+            'erase': 2,
+            'dfu': 3
+        }
+
+        if action not in actions:
+            print(f"Invalid action specified: {action}. Must be one of {list(actions.keys())}.")
+            return
+
+        # Check if ODrive is in IDLE state before proceeding
+        if not self.is_odrive_idle():
+            print(f"ODrive {self.nodeID} is not in IDLE state. Cannot perform {action} action.")
+            return
+
+        command_id = 0x16  # Command ID for reboot actions
+        action_byte = actions[action]
+        message_data = struct.pack('<B', action_byte)
+
+        try:
+            self.canBus.send(can.Message(
+                arbitration_id=(self.nodeID << 5 | command_id),
+                data=message_data,
+                is_extended_id=False
+            ))
+            print(f"{action.capitalize()} command sent to ODrive {self.nodeID}.")
+        except Exception as e:
+            print(f"Error sending {action} command to ODrive {self.nodeID}: {str(e)}")
 
 
 
