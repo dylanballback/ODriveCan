@@ -88,7 +88,9 @@ class OdriveDatabase:
             iq_setpoint REAL,
             iq_measured REAL,
             electrical_power REAL,
-            mechanical_power REAL
+            mechanical_power REAL, 
+            fet_temp REAL, 
+            motor_temp REAL
         );
         """
         self.execute(sql)
@@ -236,7 +238,7 @@ class OdriveDatabase:
 
 
 
-    def add_odrive_data(self, trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power):
+    def add_odrive_data(self, trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power, fet_temp, motor_temp):
         """
         Inserts data into the ODriveData table.
 
@@ -251,9 +253,9 @@ class OdriveDatabase:
             ...
             ... 1
         """
-        sql = '''INSERT INTO ODriveData(trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power)
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
-        return self.execute(sql, (trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power))
+        sql = '''INSERT INTO ODriveData(trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power, fet_temp, motor_temp)
+                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+        return self.execute(sql, (trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power, fet_temp, motor_temp))
 
 
     def bulk_insert_odrive_data(self, data_list):
@@ -262,9 +264,9 @@ class OdriveDatabase:
         try:
             c = conn.cursor()
             for data in data_list:
-                sql = '''INSERT INTO ODriveData(trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power)
+                sql = '''INSERT INTO ODriveData(trial_id, node_ID, time, position, velocity, torque_target, torque_estimate, bus_voltage, bus_current, iq_setpoint, iq_measured, electrical_power, mechanical_power, fet_temp, motor_temp )
                          VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
-                params = (data['trial_id'], data['node_ID'], data['time'], data['position'], data['velocity'], data['torque_target'], data['torque_estimate'], data['bus_voltage'], data['bus_current'], data['iq_setpoint'], data['iq_measured'], data['electrical_power'], data['mechanical_power'])
+                params = (data['trial_id'], data['node_ID'], data['time'], data['position'], data['velocity'], data['torque_target'], data['torque_estimate'], data['bus_voltage'], data['bus_current'], data['iq_setpoint'], data['iq_measured'], data['electrical_power'], data['mechanical_power'], data['fet_temp'], data['motor_temp'])
                 c.execute(sql, params)
             conn.commit()
         except Error as e:

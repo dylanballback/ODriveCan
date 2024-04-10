@@ -23,6 +23,8 @@ class ODriveCAN:
         torque_estimate    (float, optional): The estimated torque of the motor. Defaults to None.
         bus_voltage        (float, optional): The current bus voltage of the O-Drive. Defaults to None.
         bus_current        (float, optional): The current bus current of the O-Drive. Defaults to None.
+        fet_temp           (float, optional): The O-Drive measured FET temperature. Defaults to None.
+        motor_temp         (float, optional): The O-Drive measured Motor temperature. Defaults to None.
         iq_setpoint        (float, optional): The setpoint current in the q-axis of the motor's dq frame. Defaults to None.
         iq_measured        (float, optional): The measured current in the q-axis of the motor's dq frame. Defaults to None.
         electrical_power   (float, optional): The calculated electrical power being delivered to the motor. Defaults to None.
@@ -106,6 +108,8 @@ class ODriveCAN:
             bus_current=None,
             iq_setpoint=None,
             iq_measured=None,
+            fet_temp=None,
+            motor_temp=None,
             electrical_power=None,
             mechanical_power=None,
             error_messages = None,
@@ -908,6 +912,11 @@ class ODriveCAN:
             self.electrical_power = electrical_power
             self.mechanical_power = mechanical_power
             #print(f"Powers - Electrical: {electrical_power:.3f} W, Mechanical: {mechanical_power:.3f} W")
+        elif arbitration_id == (self.nodeID << 5 | 0x15): # Get_Temperature
+            fet_temp, motor_temp = struct.unpack('<ff', data)
+            self.fet_temp = fet_temp
+            self.motor_temp = motor_temp
+            #print(f"Temps - FET: {fet_temp:.3f} C, Motor: {motor_temp:.3f} C")
         elif arbitration_id == (self.nodeID << 5 | 0x03):  # Get_Error message
             active_errors, disarm_reason = struct.unpack('<II', data)
             # Decode and print active errors
@@ -964,7 +973,9 @@ class ODriveCAN:
                 self.iq_setpoint,
                 self.iq_measured,
                 self.electrical_power,
-                self.mechanical_power
+                self.mechanical_power,
+                self.fet_temp,
+                self.motor_temp
             )
 
 
