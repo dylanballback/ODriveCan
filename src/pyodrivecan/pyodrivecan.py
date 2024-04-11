@@ -137,6 +137,8 @@ class ODriveCAN:
         self.bus_current = bus_current
         self.iq_setpoint = iq_setpoint
         self.iq_measured = iq_measured
+        self.fet_temp = fet_temp
+        self.motor_temp = motor_temp
         self.electrical_power = electrical_power
         self.mechanical_power = mechanical_power
         self.error_messages = error_messages
